@@ -1,3 +1,7 @@
-// #include <stdio.h>
+#include "emulator.h"
 
-int main() { return 0; }
+int main() {
+  Chip8 *chip = Chip8_init();
+
+  return 0;
+}

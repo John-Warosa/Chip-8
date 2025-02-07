@@ -1,6 +1,8 @@
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 cmake_minimum_required(VERSION 3.20)
 
-project(Chip-8 C)
+project(Chip-8 LANGUAGES C)
 
 file(GLOB_RECURSE chip8_src "src/*.c")
 
