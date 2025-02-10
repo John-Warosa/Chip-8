@@ -1,4 +1,5 @@
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_C_COMPILER gcc-14)
 
 cmake_minimum_required(VERSION 3.20)
 

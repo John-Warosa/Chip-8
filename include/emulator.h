@@ -9,9 +9,10 @@ typedef struct {
   uint8_t V[16];
   uint8_t sound;
   uint8_t delay;
+  uint16_t I;
 
   // Pointers
-  // - Stack pointer, Program counter
+  // Stack pointer, Program counter
   uint8_t SP;
   uint16_t PC;
 
@@ -23,7 +24,7 @@ typedef struct {
   // Keyboard input (16 keys)
   uint16_t keyboard;
 
-  // Image buffer (32 lines of 64 pixels)
+  // pixel buffer (32 lines of 64 pixels)
   uint64_t pixels[32];
 
   // current opcode used
