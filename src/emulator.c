@@ -1,10 +1,68 @@
 #include "emulator.h"
+#include "instructions.h"
+#include "romload.h"
+#include <stdint.h>
 #include <stdlib.h>
 
-Chip8 *Chip8_init() {
+static uint16_t fetch_opcode(Chip8 *chip);
+
+static uint8_t fonts[] = {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+    0x20, 0x60, 0x20, 0x20, 0x70, // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
+Chip8 *Chip8_init(const char *filename) {
   Chip8 *chip = calloc(1, sizeof(*chip));
 
   chip->PC = 0x200;
+  load_rom(chip, filename);
+
+  int start = 0x50;
+  for (int i = 0; i < 16 * 5; ++i) {
+    chip->memory[start + i] = fonts[i];
+  }
 
   return chip;
+}
+#include <stdio.h>
+void Emulator_loop(Chip8 *chip) {
+  while (true) {
+    if (chip->delay > 0) {
+      --chip->delay;
+    }
+    if (chip->sound > 0) {
+      --chip->sound;
+    }
+
+    for (int i = 0; i < 32; ++i) {
+      printf("%llub\n", chip->pixels[i]);
+    }
+
+    for (int i = 0; i < 700; ++i) {
+      chip->opcode = fetch_opcode(chip);
+      execute(chip);
+    }
+  }
+}
+
+static uint16_t fetch_opcode(Chip8 *chip) {
+  uint8_t hiByte = chip->memory[chip->PC];
+  uint8_t loByte = chip->memory[chip->PC + 1];
+  chip->PC += 2;
+
+  return (hiByte << 8) + loByte;
 }

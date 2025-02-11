@@ -31,6 +31,8 @@ typedef struct {
   uint16_t opcode;
 } Chip8;
 
-Chip8 *Chip8_init();
+Chip8 *Chip8_init(const char *filename);
+
+void Emulator_loop(Chip8 *chip);
 
 #endif // EMULATOR_H
