@@ -120,6 +120,41 @@ void OP_EX9E(Chip8 *chip);
 // Skip instructionif key with value Vx is not pressed
 void OP_EXA1(Chip8 *chip);
 
-//
+// LD Vx, DT
+// Set Vx = delay timer
+void OP_FX07(Chip8 *chip);
+
+// LD Vx, Key
+// Wait for key press, store key value in Vx
+void OP_FX0A(Chip8 *chip);
+
+// LD DT, Vx
+// Set delay timer = Vx
+void OP_FX15(Chip8 *chip);
+
+// LD ST, Vx
+// Set sound timer = Vx
+void OP_FX18(Chip8 *chip);
+
+// Add I, Vx
+// Set I = I + Vx
+void OP_FX1E(Chip8 *chip);
+
+// LD F, Vx
+// Set I = location of font character of Vx
+void OP_FX29(Chip8 *chip);
+
+// LD B, Vx
+// Store BCD representation of Vx in I, I+1, I+2
+// Take decimal value of Vx, store hundreds in I, tens in I+1, ones in I+2
+void OP_FX33(Chip8 *chip);
+
+// LD [I], Vx
+// Store V0 to Vx in I, I+1, I+2, ...
+void OP_FX55(Chip8 *chip);
+
+// LD, Vx, [I]
+// Store I, I+1, I+2, ... in V0 to Vx
+void OP_FX65(Chip8 *chip);
 
 #endif // INSTRUCTIONS_H
