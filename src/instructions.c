@@ -8,7 +8,6 @@
 #define NNN(opcode) (opcode & 0x0fff)
 #define X_REG(opcode) ((opcode & 0x0f00) >> 8)
 #define Y_REG(opcode) ((opcode & 0x00f0) >> 4)
-#define TABLE_INDEX(opcode) ((opcode & 0xf000) >> 12)
 
 void OP_NULL(Chip8 *chip) { (void)chip; }
 
@@ -158,9 +157,7 @@ void OP_CXNN(Chip8 *chip) {
 
   chip->V[x] = randInt & NN(chip->opcode);
 }
-
-#define INDEX(row, col) 8 * row + col
-
+#include <stdio.h>
 void OP_DXYN(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
@@ -171,10 +168,14 @@ void OP_DXYN(Chip8 *chip) {
 
   for (int row = 0; row < height; ++row) {
     uint8_t byte = chip->memory[chip->I + row];
+    printf("Found at %03x: %02x\n", chip->I + row, byte);
+
     for (int col = 0; col < 8; ++col) {
-      bool pixel = byte >> (7 - col);
+      bool pixel = (byte >> (7 - col)) & 1u;
+      printf("%d", pixel);
       chip->pixels[yPos + row][xPos + col] ^= pixel;
     }
+    putchar('\n');
   }
 
   // TODO: Add Vf functionality
