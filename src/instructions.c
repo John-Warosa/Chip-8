@@ -168,8 +168,10 @@ void OP_DXYN(Chip8 *chip) {
   uint8_t yPos = chip->V[y] % 32;
 
   for (int i = 0; i < rows; ++i) {
-    chip->pixels[yPos + i] ^= chip->memory[chip->I + i] << (63 - xPos);
+    chip->pixels[yPos + i] ^= chip->memory[chip->I + i] << (63 - 7 - xPos);
   }
+
+  // TODO: Add Vf functionality
 }
 
 void OP_EX9E(Chip8 *chip) {}
