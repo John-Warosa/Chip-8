@@ -25,7 +25,7 @@ typedef struct {
   uint16_t keyboard;
 
   // pixel buffer (32 lines of 64 pixels)
-  uint64_t pixels[32];
+  bool pixels[32][64];
 
   // current opcode used
   uint16_t opcode;

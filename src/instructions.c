@@ -12,7 +12,7 @@
 
 void OP_NULL(Chip8 *chip) { (void)chip; }
 
-void OP_00E0(Chip8 *chip) { memset(chip->pixels, 0, 32); }
+void OP_00E0(Chip8 *chip) { memset(chip->pixels, 0, sizeof(chip->pixels)); }
 
 void OP_00EE(Chip8 *chip) {
   chip->PC = chip->stack[chip->SP];
@@ -159,16 +159,22 @@ void OP_CXNN(Chip8 *chip) {
   chip->V[x] = randInt & NN(chip->opcode);
 }
 
+#define INDEX(row, col) 8 * row + col
+
 void OP_DXYN(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
-  uint8_t rows = N(chip->opcode);
+  uint8_t height = N(chip->opcode);
 
   uint8_t xPos = chip->V[x] % 64;
   uint8_t yPos = chip->V[y] % 32;
 
-  for (int i = 0; i < rows; ++i) {
-    chip->pixels[yPos + i] ^= chip->memory[chip->I + i] << (63 - 7 - xPos);
+  for (int row = 0; row < height; ++row) {
+    uint8_t byte = chip->memory[chip->I + row];
+    for (int col = 0; col < 8; ++col) {
+      bool pixel = byte >> (7 - col);
+      chip->pixels[yPos + row][xPos + col] ^= pixel;
+    }
   }
 
   // TODO: Add Vf functionality
