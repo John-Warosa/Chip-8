@@ -41,6 +41,7 @@ Chip8 *Chip8_init(const char *filename) {
   return chip;
 }
 #include "raylib.h"
+#include <stdio.h>
 void Emulator_loop(Chip8 *chip) {
   while (!WindowShouldClose()) {
     // while (true) {
@@ -54,6 +55,8 @@ void Emulator_loop(Chip8 *chip) {
 
     chip->opcode = fetch_opcode(chip);
     execute(chip);
+
+    printf("%02x\n", chip->V[0xf]);
 
     render(chip);
   }

@@ -110,6 +110,7 @@ void OP_CXNN(Chip8 *chip);
 // Get N bytes from memory location I
 // Sprites are 8 pixels wide, N pixels tall
 // Pixels in buffer get XOR-ed with sprite pixels
+// Vf = 0 if sprites overlap else 0
 void OP_DXYN(Chip8 *chip);
 
 // SKP Vx

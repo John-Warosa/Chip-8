@@ -157,7 +157,7 @@ void OP_CXNN(Chip8 *chip) {
 
   chip->V[x] = randInt & NN(chip->opcode);
 }
-#include <stdio.h>
+
 void OP_DXYN(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
@@ -166,16 +166,20 @@ void OP_DXYN(Chip8 *chip) {
   uint8_t xPos = chip->V[x] % 64;
   uint8_t yPos = chip->V[y] % 32;
 
+  chip->V[0xf] = 0;
+
   for (int row = 0; row < height; ++row) {
     uint8_t byte = chip->memory[chip->I + row];
-    printf("Found at %03x: %02x\n", chip->I + row, byte);
 
     for (int col = 0; col < 8; ++col) {
-      bool pixel = (byte >> (7 - col)) & 1u;
-      printf("%d", pixel);
-      chip->pixels[yPos + row][xPos + col] ^= pixel;
+      bool memPixel = (byte >> (7 - col)) & 1u;
+      bool scrPixel = chip->pixels[yPos + row][xPos + col];
+      chip->pixels[yPos + row][xPos + col] ^= memPixel;
+
+      if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
+        chip->V[0xf] = 1;
+      }
     }
-    putchar('\n');
   }
 
   // TODO: Add Vf functionality
