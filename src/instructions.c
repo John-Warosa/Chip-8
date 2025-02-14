@@ -164,9 +164,182 @@ void OP_DXYN(Chip8 *chip) {
   uint8_t y = Y_REG(chip->opcode);
   uint8_t rows = N(chip->opcode);
 
+  uint8_t xPos = chip->V[x] % 64;
+  uint8_t yPos = chip->V[y] % 32;
+
   for (int i = 0; i < rows; ++i) {
-    chip->pixels[y + i] = 1;
+    chip->pixels[yPos + i] ^= chip->memory[chip->I + i] << (63 - xPos);
   }
 }
 
-void execute(Chip8 *chip) {}
+void OP_EX9E(Chip8 *chip) {}
+
+void OP_EXA1(Chip8 *chip) {}
+
+void OP_FX07(Chip8 *chip) {}
+
+void OP_FX0A(Chip8 *chip) {}
+
+void OP_FX15(Chip8 *chip) {}
+
+void OP_FX18(Chip8 *chip) {}
+
+void OP_FX1E(Chip8 *chip) {}
+
+void OP_FX29(Chip8 *chip) {}
+
+void OP_FX33(Chip8 *chip) {}
+
+void OP_FX55(Chip8 *chip) {}
+
+void OP_FX65(Chip8 *chip) {}
+
+void execute(Chip8 *chip) {
+  switch (chip->opcode >> 12) {
+
+  case 0x0:
+    switch (N(chip->opcode)) {
+    case 0x0:
+      OP_00E0(chip);
+      break;
+    case 0xe:
+      OP_00EE(chip);
+      break;
+    default:
+      break;
+    }
+    break;
+
+  case 0x1:
+    OP_1NNN(chip);
+    break;
+
+  case 0x2:
+    OP_2NNN(chip);
+    break;
+
+  case 0x3:
+    OP_3XNN(chip);
+    break;
+
+  case 0x4:
+    OP_4XNN(chip);
+    break;
+
+  case 0x5:
+    OP_5XY0(chip);
+    break;
+
+  case 0x6:
+    OP_6XNN(chip);
+    break;
+
+  case 0x7:
+    OP_7XNN(chip);
+    break;
+
+  case 0x8:
+    switch (N(chip->opcode)) {
+    case 0x0:
+      OP_8XY0(chip);
+      break;
+    case 0x1:
+      OP_8XY1(chip);
+      break;
+    case 0x2:
+      OP_8XY2(chip);
+      break;
+    case 0x3:
+      OP_8XY3(chip);
+      break;
+    case 0x4:
+      OP_8XY4(chip);
+      break;
+    case 0x5:
+      OP_8XY5(chip);
+      break;
+    case 0x6:
+      OP_8XY6(chip);
+      break;
+    case 0x7:
+      OP_8XY7(chip);
+      break;
+    case 0xe:
+      OP_8XYE(chip);
+      break;
+    default:
+      break;
+    }
+    break;
+
+  case 0x9:
+    OP_9XY0(chip);
+    break;
+
+  case 0xa:
+    OP_ANNN(chip);
+    break;
+
+  case 0xb:
+    OP_BNNN(chip);
+    break;
+
+  case 0xc:
+    OP_CXNN(chip);
+    break;
+
+  case 0xd:
+    OP_DXYN(chip);
+    break;
+
+  case 0xe:
+    switch (N(chip->opcode)) {
+    case 0x1:
+      OP_EX9E(chip);
+      break;
+    case 0xe:
+      OP_EX9E(chip);
+      break;
+    default:
+      break;
+    }
+    break;
+
+  case 0xf:
+    switch (NN(chip->opcode)) {
+    case 0x07:
+      OP_FX07(chip);
+      break;
+    case 0x0a:
+      OP_FX0A(chip);
+      break;
+    case 0x15:
+      OP_FX15(chip);
+      break;
+    case 0x18:
+      OP_FX18(chip);
+      break;
+    case 0x1e:
+      OP_FX1E(chip);
+      break;
+    case 0x29:
+      OP_FX29(chip);
+      break;
+    case 0x33:
+      OP_FX33(chip);
+      break;
+    case 0x55:
+      OP_FX55(chip);
+      break;
+    case 0x65:
+      OP_FX65(chip);
+      break;
+    default:
+      break;
+    }
+    break;
+
+  default:
+    break;
+  }
+}

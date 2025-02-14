@@ -1,5 +1,6 @@
 #include "emulator.h"
 #include "instructions.h"
+#include "render.h"
 #include "romload.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -36,11 +37,14 @@ Chip8 *Chip8_init(const char *filename) {
     chip->memory[start + i] = fonts[i];
   }
 
+  render_setup();
   return chip;
 }
-#include <stdio.h>
+#include "raylib.h"
 void Emulator_loop(Chip8 *chip) {
-  while (true) {
+  while (!WindowShouldClose()) {
+    // while (true) {
+
     if (chip->delay > 0) {
       --chip->delay;
     }
@@ -48,14 +52,10 @@ void Emulator_loop(Chip8 *chip) {
       --chip->sound;
     }
 
-    for (int i = 0; i < 32; ++i) {
-      printf("%llub\n", chip->pixels[i]);
-    }
+    chip->opcode = fetch_opcode(chip);
+    execute(chip);
 
-    for (int i = 0; i < 700; ++i) {
-      chip->opcode = fetch_opcode(chip);
-      execute(chip);
-    }
+    render(chip);
   }
 }
 
