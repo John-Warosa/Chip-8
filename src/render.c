@@ -3,7 +3,7 @@
 
 void render_setup() {
   InitWindow(64 * 15, 32 * 15, "Chip-8 Emulator");
-  SetTargetFPS(1);
+  SetTargetFPS(60);
 }
 
 void render(Chip8 *chip) {
