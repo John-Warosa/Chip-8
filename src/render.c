@@ -3,6 +3,7 @@
 
 void render_setup() {
   InitWindow(64 * 15, 32 * 15, "Chip-8 Emulator");
+  InitAudioDevice();
   SetTargetFPS(60);
 }
 

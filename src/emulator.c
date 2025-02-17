@@ -42,13 +42,17 @@ Chip8 *Chip8_init(const char *filename) {
 }
 #include "raylib.h"
 void Emulator_loop(Chip8 *chip) {
+  Sound sound = LoadSound("sound.wav");
+
   while (!WindowShouldClose()) {
     // while (true) {
+    StopSound(sound);
 
     if (chip->delay > 0) {
       --chip->delay;
     }
     if (chip->sound > 0) {
+      PlaySound(sound);
       --chip->sound;
     }
 
