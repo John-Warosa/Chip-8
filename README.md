@@ -9,7 +9,7 @@ I am using some test ROMs I found to test the functionality (https://github.com/
 
 ## State
 
-Right now, the emulator passes the first 2 test ROMs and implements all instructions up until the draw intruction.
+The emulator now upports all instructions except witing for keyboard input. Test ROMs 1 through 3 work fine now.
 Once the emulator is functional, I will clean up the code (and maybe the functionality) in a version 2.
 
 ## Usage
