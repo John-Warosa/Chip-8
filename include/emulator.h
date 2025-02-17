@@ -6,7 +6,7 @@
 typedef struct {
   // Registers
   // V0 to Vf, sound and delay timers
-  uint8_t V[16];
+  uint8_t V[0xf + 1];
   uint8_t sound;
   uint8_t delay;
   uint16_t I;
