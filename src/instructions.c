@@ -236,11 +236,30 @@ void OP_FX29(Chip8 *chip) {
   chip->I = 0x050 + 5 * num;
 }
 
-void OP_FX33(Chip8 *chip) {}
+void OP_FX33(Chip8 *chip) {
+  uint8_t x = X_REG(chip->opcode);
+  uint8_t val = chip->V[x];
 
-void OP_FX55(Chip8 *chip) {}
+  chip->memory[chip->I] = (val / 100) % 10;
+  chip->memory[chip->I + 1] = (val / 10) % 10;
+  chip->memory[chip->I + 2] = val % 10;
+}
 
-void OP_FX65(Chip8 *chip) {}
+void OP_FX55(Chip8 *chip) {
+  uint8_t x = X_REG(chip->opcode);
+
+  for (int i = 0; i <= x; ++i) {
+    chip->memory[chip->I + i] = chip->V[i];
+  }
+}
+
+void OP_FX65(Chip8 *chip) {
+  uint8_t x = X_REG(chip->opcode);
+
+  for (int i = 0; i <= x; ++i) {
+    chip->V[i] = chip->memory[chip->I + i];
+  }
+}
 
 void execute(Chip8 *chip) {
   switch (chip->opcode >> 12) {
