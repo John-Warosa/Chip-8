@@ -22,7 +22,7 @@ typedef struct {
   uint16_t stack[16];
 
   // Keyboard input (16 keys)
-  uint16_t keyboard;
+  bool keys[16];
 
   // pixel buffer (32 lines of 64 pixels)
   bool pixels[32][64];
