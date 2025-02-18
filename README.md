@@ -9,7 +9,8 @@ I am using some test ROMs I found to test the functionality (https://github.com/
 
 ## State
 
-The emulator now upports all instructions except witing for keyboard input. Test ROMs 1 through 3 work fine now.
+The emulator now supports all instructions except witing for keyboard input. Test ROMs 1 through 4 work fine now.
+So logic and arithmetic are properly implemented.
 Once the emulator is functional, I will clean up the code (and maybe the functionality) in a version 2.
 
 ## Usage
