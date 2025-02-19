@@ -19,6 +19,8 @@ void render(Chip8 *chip) {
     }
   }
 
+  // DrawText(TextFormat("Opcode: %04x", chip->opcode), 20, 10, 20, WHITE);
+
 #ifdef DEBUG
   const char *debug = TextFormat("Opcode: %04x\n"
                                  "V0: %02x\n"

@@ -157,7 +157,7 @@ void OP_BNNN(Chip8 *chip) {
 
 void OP_CXNN(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t randInt = rand() % 0xff;
+  uint8_t randInt = rand();
 
   chip->V[x] = randInt & NN(chip->opcode);
 }
@@ -189,7 +189,7 @@ void OP_DXYN(Chip8 *chip) {
 
 void OP_EX9E(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t index = chip->V[x] % 16;
+  uint8_t index = N(chip->V[x]);
 
   if (chip->keys[index]) {
     chip->PC += 2;
@@ -198,7 +198,7 @@ void OP_EX9E(Chip8 *chip) {
 
 void OP_EXA1(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t index = chip->V[x] % 16;
+  uint8_t index = N(chip->V[x]);
 
   if (!chip->keys[index]) {
     chip->PC += 2;
@@ -212,7 +212,16 @@ void OP_FX07(Chip8 *chip) {
 }
 
 void OP_FX0A(Chip8 *chip) {
-  // TODO: wait for keypress
+  uint8_t x = X_REG(chip->opcode);
+
+  for (int i = 0; i < 16; ++i) {
+    if (chip->keys[i]) {
+      chip->V[x] = i;
+      return;
+    }
+  }
+
+  chip->PC -= 2;
 }
 
 void OP_FX15(Chip8 *chip) {
@@ -235,7 +244,7 @@ void OP_FX1E(Chip8 *chip) {
 
 void OP_FX29(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t num = chip->V[x] % 16;
+  uint8_t num = N(chip->V[x]);
 
   chip->I = 0x050 + 5 * num;
 }
@@ -269,11 +278,11 @@ void execute(Chip8 *chip) {
   switch (chip->opcode >> 12) {
 
   case 0x0:
-    switch (N(chip->opcode)) {
-    case 0x0:
+    switch (NNN(chip->opcode)) {
+    case 0x0e0:
       OP_00E0(chip);
       break;
-    case 0xe:
+    case 0x0ee:
       OP_00EE(chip);
       break;
     default:
@@ -298,7 +307,8 @@ void execute(Chip8 *chip) {
     break;
 
   case 0x5:
-    OP_5XY0(chip);
+    if (N(chip->opcode) == 0)
+      OP_5XY0(chip);
     break;
 
   case 0x6:
@@ -344,7 +354,8 @@ void execute(Chip8 *chip) {
     break;
 
   case 0x9:
-    OP_9XY0(chip);
+    if (N(chip->opcode) == 0)
+      OP_9XY0(chip);
     break;
 
   case 0xa:
