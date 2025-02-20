@@ -1,8 +1,10 @@
 #include "render.h"
 #include "raylib.h"
 
+#define DEBUG
+
 void render_setup() {
-  InitWindow(64 * 15, 32 * 15, "Chip-8 Emulator");
+  InitWindow(64 * 15 + 350, 32 * 15, "Chip-8 Emulator");
   InitAudioDevice();
   SetTargetFPS(60);
 }
@@ -19,15 +21,20 @@ void render(Chip8 *chip) {
     }
   }
 
-  // DrawText(TextFormat("Opcode: %04x", chip->opcode), 20, 10, 20, WHITE);
-
 #ifdef DEBUG
-  const char *debug = TextFormat("Opcode: %04x\n"
-                                 "V0: %02x\n"
-                                 "V1: %02x\n"
-                                 "I: %03x\n",
-                                 chip->opcode, chip->V[0], chip->V[1], chip->I);
-  DrawText(debug, 700, 10, 15, WHITE);
+  if (IsKeyPressed(KEY_ENTER)) {
+    SetTargetFPS(60);
+  } else if (IsKeyPressed(KEY_SPACE)) {
+    SetTargetFPS(10);
+  } else if (IsKeyDown(KEY_SPACE)) {
+    SetTargetFPS(2);
+  }
+  DrawFPS(64 * 15 + 10, 10);
+  const char *debug = TextFormat("FPS: %d\n\n"
+                                 "current opcode: %04x\n",
+                                 GetFPS(), chip->opcode);
+  const char *registers = TextFormat("Registers");
+  DrawText(debug, 64 * 15 + 10, 10, 15, WHITE);
 
 #endif
 

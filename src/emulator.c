@@ -67,12 +67,7 @@ void Emulator_loop(Chip8 *chip) {
 
     get_input(chip);
 
-    // BeginDrawing();
-    // ClearBackground(RAYWHITE);
-    // DrawText(TextFormat("%d", chip->delay), 20, 20, 20, BLACK);
-    // EndDrawing();
-
-    for (int i = 0; i < 660 / 60; ++i) {
+    for (int i = 0; i < 60 / 60; ++i) {
       chip->opcode = fetch_opcode(chip);
       execute(chip);
     }
