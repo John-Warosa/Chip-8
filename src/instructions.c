@@ -1,6 +1,7 @@
 #include "instructions.h"
 #include "emulator.h"
 #include "stdlib.h"
+#include <stdio.h>
 #include <string.h>
 
 #define N(opcode) (opcode & 0x000f)
@@ -377,7 +378,7 @@ void execute(Chip8 *chip) {
   case 0xe:
     switch (N(chip->opcode)) {
     case 0x1:
-      OP_EX9E(chip);
+      OP_EXA1(chip);
       break;
     case 0xe:
       OP_EX9E(chip);

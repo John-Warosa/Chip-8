@@ -3,6 +3,7 @@
 #include "render.h"
 #include "romload.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -67,7 +68,7 @@ void Emulator_loop(Chip8 *chip) {
 
     get_input(chip);
 
-    for (int i = 0; i < 60 / 60; ++i) {
+    for (int i = 0; i < 660 / 60; ++i) {
       chip->opcode = fetch_opcode(chip);
       execute(chip);
     }
@@ -111,7 +112,7 @@ static void get_input(Chip8 *chip) {
     chip->keys[0x9] = true;
   } else if (IsKeyDown(KEY_F)) {
     chip->keys[0xe] = true;
-  } else if (IsKeyDown(KEY_Y)) {
+  } else if (IsKeyDown(KEY_Z)) {
     chip->keys[0xa] = true;
   } else if (IsKeyDown(KEY_X)) {
     chip->keys[0x0] = true;
