@@ -198,10 +198,14 @@ void OP_DXYN(Chip8 *chip) {
     uint8_t byte = chip->memory[chip->I + row];
 
     for (int col = 0; col < 8; ++col) {
+      if (yPos + row >= 32 || xPos + col >= 64) {
+        break;
+      }
+
       bool memPixel = (byte >> (7 - col)) & 1u;
       bool scrPixel = chip->pixels[yPos + row][xPos + col];
-      chip->pixels[yPos + row][xPos + col] ^= memPixel;
 
+      chip->pixels[yPos + row][xPos + col] ^= memPixel;
       if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
         chip->V[0xf] = 1;
       }
