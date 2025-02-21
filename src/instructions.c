@@ -79,6 +79,7 @@ void OP_8XY1(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] |= chip->V[y];
 }
 
@@ -86,6 +87,7 @@ void OP_8XY2(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] &= chip->V[y];
 }
 
@@ -93,6 +95,7 @@ void OP_8XY3(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] ^= chip->V[y];
 }
 
@@ -116,10 +119,16 @@ void OP_8XY5(Chip8 *chip) {
 
 void OP_8XY6(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t flag = (chip->V[x] & 1u);
+  uint8_t y = Y_REG(chip->opcode);
+  uint8_t flag = (chip->V[y] & 1u);
 
-  chip->V[x] >>= 1;
+  chip->V[x] = chip->V[y] >> 1;
   chip->V[0xf] = flag;
+  // uint8_t x = X_REG(chip->opcode);
+  // uint8_t flag = (chip->V[x] & 1u);
+
+  // chip->V[x] >>= 1;
+  // chip->V[0xf] = flag;
 }
 
 void OP_8XY7(Chip8 *chip) {
@@ -133,10 +142,16 @@ void OP_8XY7(Chip8 *chip) {
 
 void OP_8XYE(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t flag = ((chip->V[x] >> 7) & 1u);
+  uint8_t y = Y_REG(chip->opcode);
+  uint8_t flag = ((chip->V[y] >> 7) & 1u);
 
-  chip->V[x] <<= 1;
+  chip->V[x] = chip->V[y] << 1;
   chip->V[0xf] = flag;
+  // uint8_t x = X_REG(chip->opcode);
+  // uint8_t flag = ((chip->V[x] >> 7) & 1u);
+
+  // chip->V[x] <<= 1;
+  // chip->V[0xf] = flag;
 }
 
 void OP_9XY0(Chip8 *chip) {
@@ -164,6 +179,12 @@ void OP_CXNN(Chip8 *chip) {
 }
 
 void OP_DXYN(Chip8 *chip) {
+  if (!chip->vblank) {
+    chip->PC -= 2;
+    return;
+  }
+
+  chip->vblank = false;
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
   uint8_t height = N(chip->opcode);
@@ -177,10 +198,14 @@ void OP_DXYN(Chip8 *chip) {
     uint8_t byte = chip->memory[chip->I + row];
 
     for (int col = 0; col < 8; ++col) {
+      if (yPos + row >= 32 || xPos + col >= 64) {
+        break;
+      }
+
       bool memPixel = (byte >> (7 - col)) & 1u;
       bool scrPixel = chip->pixels[yPos + row][xPos + col];
-      chip->pixels[yPos + row][xPos + col] ^= memPixel;
 
+      chip->pixels[yPos + row][xPos + col] ^= memPixel;
       if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
         chip->V[0xf] = 1;
       }
@@ -285,7 +310,8 @@ void OP_FX55(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
 
   for (int i = 0; i <= x; ++i) {
-    chip->memory[chip->I + i] = chip->V[i];
+    chip->memory[chip->I++] = chip->V[i];
+    // chip->memory[chip->I + i] = chip->V[i];
   }
 }
 
@@ -293,7 +319,7 @@ void OP_FX65(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
 
   for (int i = 0; i <= x; ++i) {
-    chip->V[i] = chip->memory[chip->I + i];
+    chip->V[i] = chip->memory[chip->I++];
   }
 }
 

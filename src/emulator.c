@@ -66,6 +66,8 @@ void Emulator_loop(Chip8 *chip) {
       StopSound(sound);
     }
 
+    chip->vblank = true;
+
     for (int i = 0; i < 660 / 60; ++i) {
       get_input(chip);
       chip->opcode = fetch_opcode(chip);

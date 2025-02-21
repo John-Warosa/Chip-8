@@ -25,7 +25,9 @@ typedef struct {
   bool keys[16];
 
   // pixel buffer (32 lines of 64 pixels)
+  // VBlank interrupt
   bool pixels[32][64];
+  bool vblank;
 
   // current opcode used
   uint16_t opcode;
