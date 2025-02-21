@@ -79,6 +79,7 @@ void OP_8XY1(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] |= chip->V[y];
 }
 
@@ -86,6 +87,7 @@ void OP_8XY2(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] &= chip->V[y];
 }
 
@@ -93,6 +95,7 @@ void OP_8XY3(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
 
+  chip->V[0xf] = 0;
   chip->V[x] ^= chip->V[y];
 }
 
@@ -285,7 +288,8 @@ void OP_FX55(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
 
   for (int i = 0; i <= x; ++i) {
-    chip->memory[chip->I + i] = chip->V[i];
+    chip->memory[chip->I++] = chip->V[i];
+    // chip->memory[chip->I + i] = chip->V[i];
   }
 }
 
@@ -293,7 +297,7 @@ void OP_FX65(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
 
   for (int i = 0; i <= x; ++i) {
-    chip->V[i] = chip->memory[chip->I + i];
+    chip->V[i] = chip->memory[chip->I++];
   }
 }
 
