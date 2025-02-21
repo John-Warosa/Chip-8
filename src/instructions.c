@@ -179,6 +179,12 @@ void OP_CXNN(Chip8 *chip) {
 }
 
 void OP_DXYN(Chip8 *chip) {
+  if (!chip->vblank) {
+    chip->PC -= 2;
+    return;
+  }
+
+  chip->vblank = false;
   uint8_t x = X_REG(chip->opcode);
   uint8_t y = Y_REG(chip->opcode);
   uint8_t height = N(chip->opcode);
