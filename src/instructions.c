@@ -119,10 +119,16 @@ void OP_8XY5(Chip8 *chip) {
 
 void OP_8XY6(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t flag = (chip->V[x] & 1u);
+  uint8_t y = Y_REG(chip->opcode);
+  uint8_t flag = (chip->V[y] & 1u);
 
-  chip->V[x] >>= 1;
+  chip->V[x] = chip->V[y] >> 1;
   chip->V[0xf] = flag;
+  // uint8_t x = X_REG(chip->opcode);
+  // uint8_t flag = (chip->V[x] & 1u);
+
+  // chip->V[x] >>= 1;
+  // chip->V[0xf] = flag;
 }
 
 void OP_8XY7(Chip8 *chip) {
@@ -136,10 +142,16 @@ void OP_8XY7(Chip8 *chip) {
 
 void OP_8XYE(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
-  uint8_t flag = ((chip->V[x] >> 7) & 1u);
+  uint8_t y = Y_REG(chip->opcode);
+  uint8_t flag = ((chip->V[y] >> 7) & 1u);
 
-  chip->V[x] <<= 1;
+  chip->V[x] = chip->V[y] << 1;
   chip->V[0xf] = flag;
+  // uint8_t x = X_REG(chip->opcode);
+  // uint8_t flag = ((chip->V[x] >> 7) & 1u);
+
+  // chip->V[x] <<= 1;
+  // chip->V[0xf] = flag;
 }
 
 void OP_9XY0(Chip8 *chip) {
