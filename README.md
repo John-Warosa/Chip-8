@@ -24,17 +24,17 @@ Do not use this if you expect something good. And definitely do not look at the 
 
 ### Dependencies
 
-If you do want to try out this project, you will need CMake, raylib and (probably) a compiler that supports C23
-Simply install CMake and raylib with hombrew, then build the project.
+If you do want to try out this project, you will need CMake, raylib and (probably) a compiler that supports C23.
+Simply install CMake and raylib with hombrew, then build the project.  
 Since I only sparsely use the new C23 features, I might 'downgrade' to C11 or C99 for the next version.
 
 ### Building
 
 Otherwise, download the repo
-and build the project with Cmake in a build directory.
-    `mkdir build
-    cd build
-    cmake ..
-    cmake --build .`
-Then run the application with a binary file (usually ending in .ch8)
+and build the project with Cmake in a build directory.  
+    `mkdir build  
+    cd build  
+    cmake ..  
+    cmake --build .`  
+Then run the application with a binary file (usually ending in .ch8)  
     `./chip8 filename.ch8`
