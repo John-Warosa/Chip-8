@@ -10,8 +10,6 @@
 #define X_REG(opcode) ((opcode & 0x0f00) >> 8)
 #define Y_REG(opcode) ((opcode & 0x00f0) >> 4)
 
-static int8_t get_key(bool keys[]);
-
 void OP_NULL(Chip8 *chip) { (void)chip; }
 
 void OP_00E0(Chip8 *chip) { memset(chip->pixels, 0, sizeof(chip->pixels)); }
@@ -215,24 +213,39 @@ void OP_FX07(Chip8 *chip) {
 }
 
 void OP_FX0A(Chip8 *chip) {
-  static int8_t pressedKey = -1;
+  static uint8_t lastKeys[16];
+
   uint8_t x = X_REG(chip->opcode);
 
-  if (pressedKey >= 0) {
+  // If no key is pressed, result will be NULL
+  uint8_t *pressedKeyLast = memchr(lastKeys, 1, 16);
+  uint8_t *pressedKeyNow = memchr(chip->keys, 1, 16);
+
+  // for (int i = 0; i < 16; ++i) {
+  //   printf("chip->key[%d]: %d, lastKeys[%d]: %d\n", i, chip->keys[i], i,
+  //          lastKeys[i]);
+  // }
+
+  // Need to have non-NULL ptr and NULL ptr
+  // to represent the key being released
+  if (pressedKeyLast && !pressedKeyNow) {
+    chip->V[x] = (uint8_t)(pressedKeyLast - lastKeys);
+    memset(lastKeys, 0, 16);
+    return;
   }
 
-  for (int i = 0; i < 16; ++i) {
-    if (chip->keys[i]) {
-      chip->V[x] = i;
-      pressedKey = i;
-      return;
-    }
-  }
-
+  memcpy(lastKeys, chip->keys, 16);
   chip->PC -= 2;
-}
 
-static int8_t h;
+  // for (int i = 0; i < 16; ++i) {
+  //   if (chip->keys[i]) {
+  //     chip->V[x] = i;
+  //     return;
+  //   }
+  // }
+
+  // chip->PC -= 2;
+}
 
 void OP_FX15(Chip8 *chip) {
   uint8_t x = X_REG(chip->opcode);
