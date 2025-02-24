@@ -1,0 +1,10 @@
+#ifndef CHIP8_CONSTANTS_H
+#define CHIP8_CONSTANTS_H
+
+enum {
+  FONT_START = 0x50,
+  FONT_SIZE = 80,
+  PROGRAM_START = 0x200,
+};
+
+#endif // CHIP8_CONSTANTS_H
