@@ -36,10 +36,9 @@ typedef struct {
   // Keys 0 - 16 are represented as bits in one u16
   u16 keys;
 
-  // Pixel buffer (bitarray)
-  // Every u64 represents a display line
+  // Pixel buffer (bool array)
   // If vblank is true, sprites can be drawn to the display
-  u64 pixel_lines[32];
+  bool pixels[32][64];
   bool vblank;
 
   // opcode, only uses lower 3 nibbles
@@ -47,11 +46,13 @@ typedef struct {
 } Chip8;
 
 // Allocate emulator on the heap and initialise it
-// Returns pointer, may be NULL
+// Returned pointer may be NULL
 Chip8 *Chip8_init(void);
+
+void Chip8_loop(Chip8 *chip);
 
 // Store Chip8 info in the provided buffer
 // Returns 1 if the buffer size was too small, 0 otherwise
-int write_chip8_info(char *buf, size_t bufsize, const Chip8 *chip);
+int Chip8_write_info(char *buf, size_t bufsize, const Chip8 *chip);
 
 #endif // CHIP8_H

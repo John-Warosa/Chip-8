@@ -1,10 +1,15 @@
 #ifndef CHIP8_CONSTANTS_H
 #define CHIP8_CONSTANTS_H
 
+#include "timer.h"
+
 enum {
   FONT_START = 0x50,
   FONT_SIZE = 80,
   PROGRAM_START = 0x200,
+  STEPS_PER_SECOND = 660,
 };
+
+const milli STEP_TIME = 1000. / STEPS_PER_SECOND;
 
 #endif // CHIP8_CONSTANTS_H
