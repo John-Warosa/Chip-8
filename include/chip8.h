@@ -47,7 +47,7 @@ typedef struct {
 
 // Allocate emulator on the heap and initialise it
 // Returned pointer may be NULL
-Chip8 *Chip8_init(void);
+Chip8 *Chip8_init(const char *filename);
 
 void Chip8_loop(Chip8 *chip);
 

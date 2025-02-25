@@ -1,7 +1,7 @@
 #ifndef ROMLOAD_H
 #define ROMLOAD_H
 
-#include "emulator.h"
+#include "chip8.h"
 
 void load_rom(Chip8 *chip, const char *filename);
 

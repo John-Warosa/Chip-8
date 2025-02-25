@@ -8,6 +8,6 @@ void load_rom(Chip8 *chip, const char *filename) {
   uint16_t index = chip->PC;
 
   while ((byte = fgetc(file)) != EOF) {
-    chip->memory[index++] = byte;
+    chip->ram[index++] = byte;
   }
 }

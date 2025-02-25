@@ -4,7 +4,7 @@
 #include "chip8.h"
 #include <stddef.h>
 
-void render_init(size_t width, size_t height, size_t fps);
+void render_init(size_t width, size_t height);
 
 void render(const Chip8 *chip);
 

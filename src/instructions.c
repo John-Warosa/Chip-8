@@ -222,7 +222,33 @@ void execute_instruction(Chip8 *chip) {
   } break;
 
   case 0xd000: {
-    // TODO: Add draw function
+    // TODO: clean up maybe?
+    u8 x = X_REG(chip->opcode);
+    u8 y = Y_REG(chip->opcode);
+    u8 height = N(chip->opcode);
+
+    u8 xPos = chip->V[x] % 64;
+    u8 yPos = chip->V[y] % 32;
+
+    chip->V[0xf] = 0;
+
+    for (int row = 0; row < height; ++row) {
+      u8 byte = chip->ram[chip->I + row];
+
+      for (int col = 0; col < 8; ++col) {
+        if (yPos + row >= 32 || xPos + col >= 64) {
+          break;
+        }
+
+        bool memPixel = (byte >> (7 - col)) & 1u;
+        bool scrPixel = chip->pixels[yPos + row][xPos + col];
+
+        chip->pixels[yPos + row][xPos + col] ^= memPixel;
+        if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
+          chip->V[0xf] = 1;
+        }
+      }
+    }
   } break;
 
   // valid opcodes: EX9E nd EXA1

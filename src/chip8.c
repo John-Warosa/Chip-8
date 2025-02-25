@@ -1,11 +1,14 @@
 #include "chip8.h"
 #include "chip8_constants.h"
+#include "instructions.h"
 #include "raylib.h"
 #include "render.h"
+#include "romload.h"
 #include "timer.h"
 #include <stdlib.h>
 
 static void load_font(u8 ram[]);
+static u16 get_opcode(const u8 ram[], u16 PC);
 
 // Font set that gets loade into RAM
 // Each number is a sprite 8 pixels wide and 5 pixels tall
@@ -28,7 +31,7 @@ static const u8 fontset[FONT_SIZE] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
-Chip8 *Chip8_init(void) {
+Chip8 *Chip8_init(const char *filename) {
   Chip8 *chip = calloc(1, sizeof(*chip));
 
   if (!chip) {
@@ -37,6 +40,7 @@ Chip8 *Chip8_init(void) {
 
   chip->PC = PROGRAM_START;
   load_font(chip->ram);
+  load_rom(chip, filename);
 
   return chip;
 }
@@ -50,6 +54,7 @@ static void load_font(u8 ram[]) {
 void Chip8_loop(Chip8 *chip) {
   milli lastStepEnd = 0;
   milli nextStepStart = 0;
+  size_t counter = 0;
 
   while (!WindowShouldClose()) {
     nextStepStart = ms_time();
@@ -66,10 +71,24 @@ void Chip8_loop(Chip8 *chip) {
       --chip->sound;
     }
 
-    // TODO: get input, get opcode, execute, render
+    // TODO: get input
 
+    chip->opcode = get_opcode(chip->ram, chip->PC);
+    chip->PC += 2;
+
+    execute_instruction(chip);
+
+    if (counter % STEPS_PER_FRAME == 0) {
+      render(chip);
+    }
+
+    ++counter;
     lastStepEnd = ms_time();
   }
+}
+
+static u16 get_opcode(const u8 ram[], u16 PC) {
+  return (ram[PC] << 8) + ram[PC + 1];
 }
 
 int write_chip8_info(char *buf, size_t bufsize, const Chip8 *chip);
