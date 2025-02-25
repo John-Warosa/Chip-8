@@ -77,7 +77,12 @@ void Chip8_loop(Chip8 *chip) {
       }
 
       if (chip->sound) {
+        if (!IsSoundPlaying(sound)) {
+          PlaySound(sound);
+        }
         --chip->sound;
+      } else {
+        StopSound(sound);
       }
 
       render(chip);

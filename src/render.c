@@ -8,6 +8,8 @@ static struct RC {
   Font font;
 } RenderContext;
 
+Sound sound;
+
 static void render_screen(const Chip8 *chip);
 static void render_chip_info(const Chip8 *chip);
 
@@ -16,6 +18,7 @@ void render_init(size_t width, size_t height) {
              "A better Chip-8 emulator");
   InitAudioDevice();
 
+  sound = LoadSound(soundname);
   RenderContext = (struct RC){.width = width * SCALE,
                               .height = height * SCALE,
                               .font = LoadFont(fontname)};
