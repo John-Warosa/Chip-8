@@ -1,6 +1,7 @@
 #include "instructions.h"
 #include "chip8_constants.h"
 #include "types.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,12 +34,12 @@ nibbles for decoding the opcodes
 
 ===================================================================*/
 
-#define N(opcode) (opcode & 0x000f)
-#define NN(opcode) (opcode & 0x00ff)
-#define NNN(opcode) (opcode & 0x0fff)
-#define X_REG(opcode) ((opcode & 0x0f00) >> 8)
-#define Y_REG(opcode) ((opcode & 0x00f0) >> 4)
-#define CHECK_BIT(num, index) (num & (1u << index))
+#define N(opcode) ((opcode) & 0x000f)
+#define NN(opcode) ((opcode) & 0x00ff)
+#define NNN(opcode) ((opcode) & 0x0fff)
+#define X_REG(opcode) (((opcode) & 0x0f00) >> 8)
+#define Y_REG(opcode) (((opcode) & 0x00f0) >> 4)
+#define CHECK_BIT(num, index) ((num) & (1u << (index)))
 
 void execute_instruction(Chip8 *chip) {
   switch (chip->opcode & 0xf000) {
@@ -167,10 +168,12 @@ void execute_instruction(Chip8 *chip) {
 
     case 0x8006: {
       u8 x = X_REG(chip->opcode);
-      u8 y = Y_REG(chip->opcode);
-      u8 flag = (chip->V[y] & 1u);
+      // u8 y = Y_REG(chip->opcode);
+      // u8 flag = (chip->V[y] & 1u);
+      u8 flag = (chip->V[x] & 1u);
 
-      chip->V[x] = chip->V[y] >> 1;
+      // chip->V[x] = chip->V[y] >> 1;
+      chip->V[x] >>= 1;
       chip->V[0xf] = flag;
     } break;
 
@@ -185,10 +188,12 @@ void execute_instruction(Chip8 *chip) {
 
     case 0x800e: {
       u8 x = X_REG(chip->opcode);
-      u8 y = Y_REG(chip->opcode);
-      u8 flag = ((chip->V[y] >> 7) & 1u);
+      // u8 y = Y_REG(chip->opcode);
+      // u8 flag = ((chip->V[y] >> 7) & 1u);
+      u8 flag = ((chip->V[x] >> 7) & 1u);
 
-      chip->V[x] = chip->V[y] << 1;
+      // chip->V[x] = chip->V[y] << 1;
+      chip->V[x] <<= 1;
       chip->V[0xf] = flag;
     } break;
     }
@@ -212,7 +217,9 @@ void execute_instruction(Chip8 *chip) {
   } break;
 
   case 0xb000: {
-    u16 addr = NNN(chip->opcode) + chip->V[0x0];
+    u8 x = X_REG(chip->opcode);
+    u16 addr = NNN(chip->opcode) + chip->V[x];
+
     chip->PC = NNN(addr);
   } break;
 
@@ -238,14 +245,16 @@ void execute_instruction(Chip8 *chip) {
       u8 byte = chip->ram[chip->I + row];
 
       for (int col = 0; col < 8; ++col) {
-        if (yPos + row >= 32 || xPos + col >= 64) {
-          break;
-        }
+        // if (yPos + row >= 32 || xPos + col >= 64) {
+        //   break;
+        // }
+        // if (xPos + col >= 64)
+        //   break;
 
         bool memPixel = (byte >> (7 - col)) & 1u;
-        bool scrPixel = chip->pixels[yPos + row][xPos + col];
+        bool scrPixel = chip->pixels[(yPos + row) % 32][(xPos + col) % 64];
 
-        chip->pixels[yPos + row][xPos + col] ^= memPixel;
+        chip->pixels[(yPos + row) % 32][(xPos + col) % 64] ^= memPixel;
         if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
           chip->V[0xf] = 1;
         }
