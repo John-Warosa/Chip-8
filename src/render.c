@@ -50,6 +50,10 @@ static void render_chip_info(const Chip8 *chip) {
                                 "pc: %03x\n",
                                 chip->opcode, chip->PC);
   DrawText(info, RenderContext.width + 20, 0, 20, RAYWHITE);
+  for (int i = 0; i < 16; ++i) {
+    DrawText(TextFormat("V%x: %02x", i, chip->V[i]), RenderContext.width + 20,
+             50 + 20 * i, 20, RAYWHITE);
+  }
   // static char chipInfo[1024];
   // chipInfo = TextFormat("Opcode: %d", chip->opcode);
 }

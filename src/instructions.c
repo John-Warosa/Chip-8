@@ -151,7 +151,7 @@ void execute_instruction(Chip8 *chip) {
       u8 flag = ((chip->V[x] + chip->V[y]) > 0xff);
 
       chip->V[x] += chip->V[y];
-      chip->V[0x0] = flag;
+      chip->V[0xf] = flag;
     } break;
 
     case 0x8005: {
@@ -160,7 +160,7 @@ void execute_instruction(Chip8 *chip) {
       u8 flag = (chip->V[x] >= chip->V[y]);
 
       chip->V[x] -= chip->V[y];
-      chip->V[0x0] = flag;
+      chip->V[0xf] = flag;
     } break;
 
     case 0x8006: {
@@ -314,7 +314,7 @@ void execute_instruction(Chip8 *chip) {
       u8 num = N(chip->V[x]);
 
       // TODO: Use enum instead
-      // chip->I = 0x050 + 5 * num;
+      chip->I = 0x050 + 5 * num;
     } break;
 
     case 0xf033: {
