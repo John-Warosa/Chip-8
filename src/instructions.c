@@ -1,11 +1,12 @@
 #include "instructions.h"
+#include "chip8_constants.h"
 #include "types.h"
 #include <stdlib.h>
 #include <string.h>
 
 /*===================================================================
 
-Opocdes
+Opcodes
 
 Each opcode is a 2 Byte unsigned integer of the form N0_N1_N2_N3,
 where Nx represents the nibbles of the opcode (nibble = 4 bits)
@@ -37,6 +38,7 @@ nibbles for decoding the opcodes
 #define NNN(opcode) (opcode & 0x0fff)
 #define X_REG(opcode) ((opcode & 0x0f00) >> 8)
 #define Y_REG(opcode) ((opcode & 0x00f0) >> 4)
+#define CHECK_BIT(num, index) (num & (1u << index))
 
 void execute_instruction(Chip8 *chip) {
   switch (chip->opcode & 0xf000) {
@@ -259,18 +261,18 @@ void execute_instruction(Chip8 *chip) {
       u8 x = X_REG(chip->opcode);
       u8 index = N(chip->V[x]);
 
-      // if (chip->keys[index]) {
-      //   chip->PC += 2;
-      // }
+      if (CHECK_BIT(chip->keys, index)) {
+        chip->PC += 2;
+      }
     } break;
 
     case 0xe0a1: {
       u8 x = X_REG(chip->opcode);
       u8 index = N(chip->V[x]);
 
-      // if (!chip->keys[index]) {
-      //   chip->PC += 2;
-      // }
+      if (!CHECK_BIT(chip->keys, index)) {
+        chip->PC += 2;
+      }
     } break;
     }
     break;
@@ -288,7 +290,25 @@ void execute_instruction(Chip8 *chip) {
     } break;
 
     case 0xf00a: {
-      // TODO: add instruction, too lazy now
+      static u16 lastKeys;
+
+      if (!lastKeys || chip->keys) {
+        chip->PC -= 2;
+        lastKeys = chip->keys;
+
+        return;
+      }
+
+      u8 x = X_REG(chip->opcode);
+
+      for (size_t i = 0; i < 16; ++i) {
+        if (CHECK_BIT(lastKeys, i)) {
+          chip->V[x] = i;
+          lastKeys = chip->keys;
+
+          return;
+        }
+      }
     } break;
 
     case 0xf015: {
@@ -313,8 +333,8 @@ void execute_instruction(Chip8 *chip) {
       u8 x = X_REG(chip->opcode);
       u8 num = N(chip->V[x]);
 
-      // TODO: Use enum instead
-      chip->I = 0x050 + 5 * num;
+      // TODO: make 5 into enum value
+      chip->I = FONT_START + 5 * num;
     } break;
 
     case 0xf033: {

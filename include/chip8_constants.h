@@ -11,6 +11,6 @@ enum {
   STEPS_PER_FRAME = 11,
 };
 
-const milli STEP_TIME = 1000. / STEPS_PER_SECOND;
+static const milli STEP_TIME = 1000. / STEPS_PER_SECOND;
 
 #endif // CHIP8_CONSTANTS_H
