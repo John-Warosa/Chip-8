@@ -1,5 +1,6 @@
 #include "chip8.h"
 #include "chip8_constants.h"
+#include "input.h"
 #include "instructions.h"
 #include "raylib.h"
 #include "render.h"
@@ -63,7 +64,7 @@ void Chip8_loop(Chip8 *chip) {
       continue;
     }
 
-    // TODO: get input
+    chip->keys = get_keys();
 
     chip->opcode = get_opcode(chip->ram, chip->PC);
     chip->PC += 2;
