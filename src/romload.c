@@ -1,13 +1,13 @@
 #include "romload.h"
 #include <stdio.h>
 
-void load_rom(Chip8 *chip, const char *filename) {
+void load_rom(u8 ram[], size_t start, const char *filename) {
   FILE *file = fopen(filename, "r");
 
   int byte;
-  uint16_t index = chip->PC;
+  uint16_t index = start;
 
   while ((byte = fgetc(file)) != EOF) {
-    chip->ram[index++] = byte;
+    ram[index++] = byte;
   }
 }

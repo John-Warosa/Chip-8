@@ -40,7 +40,7 @@ Chip8 *Chip8_init(const char *filename) {
 
   chip->PC = PROGRAM_START;
   load_font(chip->ram);
-  load_rom(chip, filename);
+  load_rom(chip->ram, PROGRAM_START, filename);
 
   return chip;
 }
@@ -63,14 +63,6 @@ void Chip8_loop(Chip8 *chip) {
       continue;
     }
 
-    if (chip->delay) {
-      --chip->delay;
-    }
-
-    if (chip->sound) {
-      --chip->sound;
-    }
-
     // TODO: get input
 
     chip->opcode = get_opcode(chip->ram, chip->PC);
@@ -79,6 +71,14 @@ void Chip8_loop(Chip8 *chip) {
     execute_instruction(chip);
 
     if (counter % STEPS_PER_FRAME == 0) {
+      if (chip->delay) {
+        --chip->delay;
+      }
+
+      if (chip->sound) {
+        --chip->sound;
+      }
+
       render(chip);
     }
 

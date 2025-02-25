@@ -43,7 +43,7 @@ void execute_instruction(Chip8 *chip) {
 
   // Two valid opcodes: 00E0 and 00EE
   case 0x0000:
-    switch (chip->opcode & 0x0fff) {
+    switch (chip->opcode & 0xffff) {
 
     case 0x00e0:
       memset(chip->pixels, 0, sizeof(chip->pixels));
@@ -57,7 +57,7 @@ void execute_instruction(Chip8 *chip) {
     break;
 
   case 0x1000:
-    chip->I = NNN(chip->opcode);
+    chip->PC = NNN(chip->opcode);
     break;
 
   case 0x2000:
@@ -148,9 +148,9 @@ void execute_instruction(Chip8 *chip) {
     case 0x8004: {
       u8 x = X_REG(chip->opcode);
       u8 y = Y_REG(chip->opcode);
-      u8 flag = (chip->V[x] + chip->V[y] > 0xff);
+      u8 flag = ((chip->V[x] + chip->V[y]) > 0xff);
 
-      chip->V[x] += chip->V[x] + chip->V[y];
+      chip->V[x] += chip->V[y];
       chip->V[0x0] = flag;
     } break;
 
