@@ -1,9 +1,21 @@
-#include "chip8.h"
-#include "render.h"
+#include "emulator/emulator.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
-  render_init(64, 32);
-  Chip8 *chip = Chip8_init(argv[1]);
+  if (argc < 2) {
+    fprintf(stderr, "Failed to run emulator. Need to provide a file to run.\n"
+                    "Use ./chip8 <filename> to properly run the program.");
+    exit(1);
+  } else if (argc > 2) {
+    fprintf(stderr,
+            "Failed to run emulator. Please provide only one file to run.\n"
+            "Use ./chip8 <filename> to properly run the program.\n"
+            "Support for multiple files may be added in the future.");
+  }
 
-  Chip8_loop(chip);
+  static Emulator emu;
+
+  Emulator_init(&emu, argv[1]);
+  Emulator_loop(&emu);
 }

@@ -1,17 +1,19 @@
-#include "render.h"
+#include "render/render.h"
 #include "raylib.h"
-#include "render_constants.h"
-
-static struct RC {
-  size_t width;
-  size_t height;
-  Font font;
-} RenderContext;
-
-Sound sound;
+#include "render/render_constants.h"
 
 static void render_screen(const Chip8 *chip);
 static void render_chip_info(const Chip8 *chip);
+
+static struct RenderContext {
+  size_t width;
+  size_t height;
+
+  enum Scene scene;
+  Font font;
+} rc;
+
+Sound sound;
 
 void render_init(size_t width, size_t height) {
   InitWindow(width * SCALE + INFO_WIDTH, height * SCALE,
@@ -19,17 +21,20 @@ void render_init(size_t width, size_t height) {
   InitAudioDevice();
 
   sound = LoadSound(soundname);
-  RenderContext = (struct RC){.width = width * SCALE,
+  rc = (struct RenderContext){.width = width * SCALE,
                               .height = height * SCALE,
+                              .scene = SCENE_CHIP8,
                               .font = LoadFont(fontname)};
 }
+
+void change_scene(enum Scene scene) { rc.scene = scene; }
 
 void render(const Chip8 *chip) {
   BeginDrawing();
 
   ClearBackground(DARKGRAY);
 
-  DrawRectangle(0, 0, RenderContext.width, RenderContext.height, BLACK);
+  DrawRectangle(0, 0, rc.width, rc.height, BLACK);
   render_screen(chip);
   render_chip_info(chip);
 
@@ -52,10 +57,10 @@ static void render_chip_info(const Chip8 *chip) {
   const char *info = TextFormat("op: %04x\n"
                                 "pc: %03x\n",
                                 chip->opcode, chip->PC);
-  DrawText(info, RenderContext.width + 20, 0, 20, RAYWHITE);
+  DrawText(info, rc.width + 20, 0, 20, RAYWHITE);
   for (int i = 0; i < 16; ++i) {
-    DrawText(TextFormat("V%x: %02x", i, chip->V[i]), RenderContext.width + 20,
-             50 + 20 * i, 20, RAYWHITE);
+    DrawText(TextFormat("V%x: %02x", i, chip->V[i]), rc.width + 20, 50 + 20 * i,
+             20, RAYWHITE);
   }
   // static char chipInfo[1024];
   // chipInfo = TextFormat("Opcode: %d", chip->opcode);

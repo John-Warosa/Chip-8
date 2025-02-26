@@ -2,10 +2,17 @@
 #define EMULATOR_H
 
 #include "chip8.h"
+#include "emulator/emulator_constants.h"
+#include "types.h"
 
 typedef struct {
   Chip8 chip;
-  const char *filename;
+  u16 quirks;
+  char filename[MAX_FILE_LENGTH];
 } Emulator;
+
+void Emulator_init(Emulator *emu, const char *filename);
+
+void Emulator_loop(Emulator *emu);
 
 #endif // EMULATOR_H

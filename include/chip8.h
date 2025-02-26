@@ -68,11 +68,15 @@ typedef struct {
   u8 quirks;
 } Chip8;
 
-// Allocate emulator on the heap and initialise it
-// Returned pointer may be NULL
-Chip8 *Chip8_init(const char *filename);
+// Initialises Chip8 by setting PC and memory
+void Chip8_init(Chip8 *chip, const char *filename);
 
-void Chip8_loop(Chip8 *chip);
+// Goes through a single step:
+// - update timer registers if necessary
+// - Process input
+// - fetch instruction
+// - execute instruction
+void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers);
 
 // Store Chip8 info in the provided buffer
 // Returns 1 if the buffer size was too small, 0 otherwise

@@ -343,7 +343,7 @@ void execute_instruction(Chip8 *chip) {
       u8 num = N(chip->V[x]);
 
       // TODO: make 5 into enum value
-      chip->I = FONT_START + 5 * num;
+      chip->I = CHIP8_FONT_START + 5 * num;
     } break;
 
     case 0xf033: {

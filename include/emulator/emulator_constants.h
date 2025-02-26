@@ -1,0 +1,15 @@
+#ifndef EMULATOR_CONSTANTS_H
+#define EMULATOR_CONSTANTS_H
+
+#include "timer.h"
+
+enum {
+  STEPS_PER_SECOND = 660,
+  STEPS_PER_FRAME = 11,
+  DEFAULT_QUIRKS = 0b00111100,
+  MAX_FILE_LENGTH = 1024,
+};
+
+static const milli STEP_TIME = 1000. / STEPS_PER_SECOND;
+
+#endif // EMULATOR_CONSTANTS_H
