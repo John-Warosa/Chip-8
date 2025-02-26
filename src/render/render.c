@@ -1,5 +1,4 @@
 #include "render/render.h"
-#include "input.h"
 #include "raylib.h"
 #include "render/render_constants.h"
 
@@ -30,16 +29,21 @@ void render_init(size_t width, size_t height) {
 
 void change_scene(enum Scene scene) { rc.scene = scene; }
 
-void render(const Chip8 *chip) {
-  play_sound(chip->sound);
+void render(const Emulator *emu) {
+  play_sound(emu->chip.sound);
 
   BeginDrawing();
 
   ClearBackground(DARKGRAY);
 
   DrawRectangle(0, 0, rc.width, rc.height, BLACK);
-  render_screen(chip);
-  render_chip_info(chip);
+  render_screen(&emu->chip);
+  for (int i = 0; i < 6; ++i) {
+    DrawText(TextFormat("Quirk %d: %d", i, emu->quirks & (1u << i) ? 1 : 0),
+             rc.width + 200, 20 + 20 * i, 20, RAYWHITE);
+  }
+
+  render_chip_info(&emu->chip);
 
   DrawFPS(20, 20);
 

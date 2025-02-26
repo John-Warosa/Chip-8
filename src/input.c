@@ -4,16 +4,31 @@
 #define SET_KEY(key, index) (key | 1u << index)
 
 enum Action get_action(void) {
-  if (IsKeyPressed(KEY_ESCAPE))
+  if (!IsKeyDown(KEY_LEFT_SUPER))
+    return NO_ACTION;
+
+  switch (GetKeyPressed()) {
+  case KEY_ESCAPE:
     return EMU_EXIT;
-
-  if (IsKeyDown(KEY_LEFT_SUPER) && IsKeyPressed(KEY_R))
+  case KEY_R:
     return CHIP8_RESTART;
-
-  if (IsKeyDown(KEY_LEFT_SUPER) && IsKeyPressed(KEY_P))
+  case KEY_P:
     return CHIP8_PAUSE;
-
-  return NO_ACTION;
+  case KEY_ONE:
+    return TOGGLE_QUIRK_0;
+  case KEY_TWO:
+    return TOGGLE_QUIRK_1;
+  case KEY_THREE:
+    return TOGGLE_QUIRK_2;
+  case KEY_FOUR:
+    return TOGGLE_QUIRK_3;
+  case KEY_FIVE:
+    return TOGGLE_QUIRK_4;
+  case KEY_SIX:
+    return TOGGLE_QUIRK_5;
+  default:
+    return NO_ACTION;
+  }
 }
 
 u16 get_keys(void) {

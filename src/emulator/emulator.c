@@ -8,6 +8,7 @@
 #include <string.h>
 
 #define ENOUGH_STEPS(counter, steps) ((counter) % (steps) == 0)
+#define TOGGLE_QUIRK(quirks, index) ((quirks) ^ (1u << (index)))
 
 static void action_handler(Emulator *emu, enum Action action);
 
@@ -40,7 +41,7 @@ void Emulator_loop(Emulator *emu) {
     }
 
     if (ENOUGH_STEPS(counter, STEPS_PER_FRAME)) {
-      render(&emu->chip);
+      render(emu);
     }
 
     action_handler(emu, get_action());
@@ -61,6 +62,25 @@ static void action_handler(Emulator *emu, enum Action action) {
     break;
   case CHIP8_PAUSE:
     emu->pause = !emu->pause;
+    break;
+  case TOGGLE_QUIRK_0:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 0);
+    break;
+  case TOGGLE_QUIRK_1:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 1);
+    break;
+  case TOGGLE_QUIRK_2:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 2);
+    break;
+  case TOGGLE_QUIRK_3:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 3);
+    break;
+  case TOGGLE_QUIRK_4:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 4);
+    break;
+  case TOGGLE_QUIRK_5:
+    emu->quirks = TOGGLE_QUIRK(emu->quirks, 5);
+    break;
   default:
     break;
   }

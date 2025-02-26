@@ -1,7 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include "chip8.h"
+#include "emulator/emulator.h"
 #include <stddef.h>
 
 enum Scene {
@@ -11,7 +11,7 @@ enum Scene {
 
 void render_init(size_t width, size_t height);
 
-void render(const Chip8 *chip);
+void render(const Emulator *emu);
 
 void change_scene(enum Scene scene);
 

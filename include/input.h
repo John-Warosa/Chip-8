@@ -25,10 +25,16 @@ in enum Action.
 ===================================================================*/
 
 enum Action {
-  NO_ACTION,     // No key pressed
-  EMU_EXIT,      // Esc
-  CHIP8_PAUSE,   // Ctrl + p
-  CHIP8_RESTART, // Ctrl + r
+  NO_ACTION,      // No key pressed
+  EMU_EXIT,       // Ctrl + Esc
+  CHIP8_PAUSE,    // Ctrl + p
+  CHIP8_RESTART,  // Ctrl + r
+  TOGGLE_QUIRK_0, // Ctrl + 1
+  TOGGLE_QUIRK_1, // Ctrl + 2
+  TOGGLE_QUIRK_2, // Ctrl + 3
+  TOGGLE_QUIRK_3, // Ctrl + 4
+  TOGGLE_QUIRK_4, // Ctrl + 5
+  TOGGLE_QUIRK_5, // Ctrl + 6
 };
 
 enum Action get_action(void);
