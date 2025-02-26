@@ -2,12 +2,10 @@
 #include "chip8_constants.h"
 #include "input.h"
 #include "instructions.h"
-#include "raylib.h"
-#include "render/render.h"
 #include "romload.h"
-#include "timer.h"
 
 static void load_font(u8 ram[]);
+static void update_timers(Chip8 *chip);
 static u16 get_opcode(const u8 ram[], u16 PC);
 
 // Font set that gets loade into RAM
@@ -46,6 +44,7 @@ static void load_font(u8 ram[]) {
 
 void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers) {
   if (updateTimers) {
+    update_timers(chip);
   }
 
   chip->keys = get_keys();
@@ -54,6 +53,16 @@ void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers) {
   chip->PC += 2;
 
   execute_instruction(chip);
+}
+
+static void update_timers(Chip8 *chip) {
+  if (chip->delay) {
+    --chip->delay;
+  }
+
+  if (chip->sound) {
+    --chip->sound;
+  }
 }
 
 static u16 get_opcode(const u8 ram[], u16 PC) {
