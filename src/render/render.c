@@ -4,6 +4,7 @@
 
 static void render_screen(const Chip8 *chip);
 static void render_chip_info(const Chip8 *chip);
+static void play_sound(u8 soundTimer);
 
 static struct RenderContext {
   size_t width;
@@ -11,25 +12,26 @@ static struct RenderContext {
 
   enum Scene scene;
   Font font;
+  Sound sound;
 } rc;
-
-Sound sound;
 
 void render_init(size_t width, size_t height) {
   InitWindow(width * SCALE + INFO_WIDTH, height * SCALE,
              "A better Chip-8 emulator");
   InitAudioDevice();
 
-  sound = LoadSound(soundname);
   rc = (struct RenderContext){.width = width * SCALE,
                               .height = height * SCALE,
                               .scene = SCENE_CHIP8,
-                              .font = LoadFont(fontname)};
+                              .font = LoadFont(fontname),
+                              .sound = LoadSound(soundname)};
 }
 
 void change_scene(enum Scene scene) { rc.scene = scene; }
 
 void render(const Chip8 *chip) {
+  play_sound(chip->sound);
+
   BeginDrawing();
 
   ClearBackground(DARKGRAY);
@@ -41,6 +43,16 @@ void render(const Chip8 *chip) {
   DrawFPS(20, 20);
 
   EndDrawing();
+}
+
+static void play_sound(u8 soundTimer) {
+  if (soundTimer) {
+    if (!IsSoundPlaying(rc.sound)) {
+      PlaySound(rc.sound);
+    }
+  } else {
+    StopSound(rc.sound);
+  }
 }
 
 static void render_screen(const Chip8 *chip) {

@@ -2,6 +2,7 @@
 #define RENDER_H
 
 #include "chip8.h"
+// Still need raylib.h for Emulator mainloop
 #include "raylib.h"
 #include <stddef.h>
 
@@ -15,7 +16,5 @@ void render_init(size_t width, size_t height);
 void render(const Chip8 *chip);
 
 void change_scene(enum Scene scene);
-
-extern Sound sound;
 
 #endif // RENDER_H
