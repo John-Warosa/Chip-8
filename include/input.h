@@ -27,6 +27,7 @@ in enum Action.
 enum Action {
   NO_ACTION,     // No key pressed
   EMU_EXIT,      // Esc
+  CHIP8_PAUSE,   // Ctrl + p
   CHIP8_RESTART, // Ctrl + r
 };
 

@@ -10,6 +10,9 @@ enum Action get_action(void) {
   if (IsKeyDown(KEY_LEFT_SUPER) && IsKeyPressed(KEY_R))
     return CHIP8_RESTART;
 
+  if (IsKeyDown(KEY_LEFT_SUPER) && IsKeyPressed(KEY_P))
+    return CHIP8_PAUSE;
+
   return NO_ACTION;
 }
 

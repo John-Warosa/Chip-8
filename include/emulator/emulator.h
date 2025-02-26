@@ -11,6 +11,7 @@ typedef struct {
   u16 quirks;
   char filename[MAX_FILE_LENGTH];
   bool running;
+  bool pause;
 } Emulator;
 
 void Emulator_init(Emulator *emu, const char *filename);

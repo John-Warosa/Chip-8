@@ -2,8 +2,6 @@
 #define RENDER_H
 
 #include "chip8.h"
-// Still need raylib.h for Emulator mainloop
-#include "raylib.h"
 #include <stddef.h>
 
 enum Scene {

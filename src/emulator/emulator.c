@@ -3,7 +3,6 @@
 #include "chip8_constants.h"
 #include "emulator/emulator_constants.h"
 #include "input.h"
-#include "raylib.h"
 #include "render/render.h"
 #include "timer.h"
 #include <string.h>
@@ -35,7 +34,10 @@ void Emulator_loop(Emulator *emu) {
       continue;
     }
 
-    Chip8_step(&emu->chip, emu->quirks, ENOUGH_STEPS(counter, STEPS_PER_FRAME));
+    if (!emu->pause) {
+      Chip8_step(&emu->chip, emu->quirks,
+                 ENOUGH_STEPS(counter, STEPS_PER_FRAME));
+    }
 
     if (ENOUGH_STEPS(counter, STEPS_PER_FRAME)) {
       render(&emu->chip);
@@ -55,7 +57,10 @@ static void action_handler(Emulator *emu, enum Action action) {
     break;
   case CHIP8_RESTART:
     Chip8_restart(&emu->chip, emu->filename);
+    emu->pause = false;
     break;
+  case CHIP8_PAUSE:
+    emu->pause = !emu->pause;
   default:
     break;
   }
