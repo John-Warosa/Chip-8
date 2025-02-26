@@ -61,7 +61,7 @@ void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers) {
   chip->opcode = get_opcode(chip->ram, chip->PC);
   chip->PC += 2;
 
-  execute_instruction(chip);
+  execute_instruction(chip, quirks);
 }
 
 static void update_timers(Chip8 *chip) {

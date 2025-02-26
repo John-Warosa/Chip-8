@@ -1,7 +1,7 @@
 #include "instructions.h"
 #include "chip8_constants.h"
+#include "emulator/emulator_constants.h"
 #include "types.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -29,19 +29,20 @@ The nibbles are used as follows:
 For more information on the instructions and different opcodes,
 see Cowgod's reference manual
 
-Below are some macros to determine the most commonly required
-nibbles for decoding the opcodes
-
 ===================================================================*/
 
+// Opcode macros for nibbles and registers
 #define N(opcode) ((opcode) & 0x000f)
 #define NN(opcode) ((opcode) & 0x00ff)
 #define NNN(opcode) ((opcode) & 0x0fff)
 #define X_REG(opcode) (((opcode) & 0x0f00) >> 8)
 #define Y_REG(opcode) (((opcode) & 0x00f0) >> 4)
-#define CHECK_BIT(num, index) ((num) & (1u << (index)))
 
-void execute_instruction(Chip8 *chip) {
+// Macros for checking bits and flags
+#define CHECK_BIT(num, index) ((num) & (1u << (index)))
+#define IS_QUIRK_ACTIVE(quirks, index) ((quirks) & (1u << index))
+
+void execute_instruction(Chip8 *chip, u16 quirks) {
   switch (chip->opcode & 0xf000) {
 
   // Two valid opcodes: 00E0 and 00EE
@@ -132,6 +133,10 @@ void execute_instruction(Chip8 *chip) {
       u8 y = Y_REG(chip->opcode);
 
       chip->V[x] |= chip->V[y];
+
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_RESET)) {
+        chip->V[0xf] = 0;
+      }
     } break;
 
     case 0x8002: {
@@ -139,6 +144,10 @@ void execute_instruction(Chip8 *chip) {
       u8 y = Y_REG(chip->opcode);
 
       chip->V[x] &= chip->V[y];
+
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_RESET)) {
+        chip->V[0xf] = 0;
+      }
     } break;
 
     case 0x8003: {
@@ -146,6 +155,10 @@ void execute_instruction(Chip8 *chip) {
       u8 y = Y_REG(chip->opcode);
 
       chip->V[x] ^= chip->V[y];
+
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_RESET)) {
+        chip->V[0xf] = 0;
+      }
     } break;
 
     case 0x8004: {
@@ -358,16 +371,29 @@ void execute_instruction(Chip8 *chip) {
     case 0xf055: {
       u8 x = X_REG(chip->opcode);
 
-      for (int i = 0; i <= x; ++i) {
-        chip->ram[chip->I + i] = chip->V[i];
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_MEMORY)) {
+        for (size_t i = 0; i <= x; ++i) {
+          chip->ram[chip->I++] = chip->V[i];
+        }
+      } else {
+        for (size_t i = 0; i <= x; ++i) {
+          chip->ram[chip->I + i] = chip->V[i];
+        }
       }
     } break;
 
     case 0xf065: {
       u8 x = X_REG(chip->opcode);
 
-      for (int i = 0; i <= x; ++i) {
-        chip->V[i] = chip->ram[chip->I++];
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_MEMORY)) {
+
+        for (size_t i = 0; i <= x; ++i) {
+          chip->V[i] = chip->ram[chip->I++];
+        }
+      } else {
+        for (size_t i = 0; i <= x; ++i) {
+          chip->V[i] = chip->ram[chip->I + i];
+        }
       }
     } break;
     }

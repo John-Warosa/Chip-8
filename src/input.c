@@ -1,15 +1,17 @@
 #include "input.h"
 #include "raylib.h"
 
-#define SET_KEY(key, index) (key | 1u << index)
+#define EMU_KEY KEY_LEFT_CONTROL
+#define SET_KEY(index) (0 | 1u << index)
 
 enum Action get_action(void) {
-  if (!IsKeyDown(KEY_LEFT_SUPER))
+  if (IsKeyPressed(KEY_ESCAPE))
+    return EMU_EXIT;
+
+  if (!IsKeyDown(EMU_KEY))
     return NO_ACTION;
 
   switch (GetKeyPressed()) {
-  case KEY_ESCAPE:
-    return EMU_EXIT;
   case KEY_R:
     return CHIP8_RESTART;
   case KEY_P:
@@ -32,41 +34,43 @@ enum Action get_action(void) {
 }
 
 u16 get_keys(void) {
-  u16 keys = 0;
+  // Ignore Chip-8 input if emulator key is pressed
+  if (IsKeyDown(EMU_KEY))
+    return 0;
 
   if (IsKeyDown(KEY_ONE)) {
-    keys = SET_KEY(keys, 0x1);
+    return SET_KEY(0x1);
   } else if (IsKeyDown(KEY_TWO)) {
-    keys = SET_KEY(keys, 0x2);
+    return SET_KEY(0x2);
   } else if (IsKeyDown(KEY_THREE)) {
-    keys = SET_KEY(keys, 0x3);
+    return SET_KEY(0x3);
   } else if (IsKeyDown(KEY_FOUR)) {
-    keys = SET_KEY(keys, 0xc);
+    return SET_KEY(0xc);
   } else if (IsKeyDown(KEY_Q)) {
-    keys = SET_KEY(keys, 0x4);
+    return SET_KEY(0x4);
   } else if (IsKeyDown(KEY_W)) {
-    keys = SET_KEY(keys, 0x5);
+    return SET_KEY(0x5);
   } else if (IsKeyDown(KEY_E)) {
-    keys = SET_KEY(keys, 0x6);
+    return SET_KEY(0x6);
   } else if (IsKeyDown(KEY_R)) {
-    keys = SET_KEY(keys, 0xd);
+    return SET_KEY(0xd);
   } else if (IsKeyDown(KEY_A)) {
-    keys = SET_KEY(keys, 0x7);
+    return SET_KEY(0x7);
   } else if (IsKeyDown(KEY_S)) {
-    keys = SET_KEY(keys, 0x8);
+    return SET_KEY(0x8);
   } else if (IsKeyDown(KEY_D)) {
-    keys = SET_KEY(keys, 0x9);
+    return SET_KEY(0x9);
   } else if (IsKeyDown(KEY_F)) {
-    keys = SET_KEY(keys, 0xe);
+    return SET_KEY(0xe);
   } else if (IsKeyDown(KEY_Z)) {
-    keys = SET_KEY(keys, 0xa);
+    return SET_KEY(0xa);
   } else if (IsKeyDown(KEY_X)) {
-    keys = SET_KEY(keys, 0x0);
+    return SET_KEY(0x0);
   } else if (IsKeyDown(KEY_C)) {
-    keys = SET_KEY(keys, 0xb);
+    return SET_KEY(0xb);
   } else if (IsKeyDown(KEY_V)) {
-    keys = SET_KEY(keys, 0xf);
+    return SET_KEY(0xf);
   }
 
-  return keys;
+  return 0;
 }

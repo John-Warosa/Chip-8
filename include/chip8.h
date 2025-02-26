@@ -63,9 +63,6 @@ typedef struct {
 
   // opcode, only uses lower 3 nibbles
   u16 opcode;
-
-  // flags for quirks, bits 0 - 5 will be used as laid out above
-  u8 quirks;
 } Chip8;
 
 // Initialises Chip8 by setting PC and RAM
