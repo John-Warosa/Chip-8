@@ -8,6 +8,7 @@
 #include "timer.h"
 #include <stdlib.h>
 
+static void Chip8_reset(Chip8 *chip);
 static void load_font(u8 ram[]);
 static u16 get_opcode(const u8 ram[], u16 PC);
 
@@ -40,11 +41,15 @@ Chip8 *Chip8_init(const char *filename) {
   }
 
   chip->PC = PROGRAM_START;
+  chip->quirks = 0b00111100;
+
   load_font(chip->ram);
   load_rom(chip->ram, PROGRAM_START, filename);
 
   return chip;
 }
+
+static void Chip8_reset(Chip8 *chip) {}
 
 static void load_font(u8 ram[]) {
   for (size_t i = 0; i < FONT_SIZE; ++i) {

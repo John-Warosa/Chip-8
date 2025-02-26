@@ -11,6 +11,26 @@ and the guides by Austin Morlan and Tobias V. Langhoff:
   - https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
   - https://austinmorlan.com/posts/chip8_emulator/
 
+The Chip-8 has 6 quirks that can change a programs behaviour.
+Those are:
+  - 0: Vf reset
+  - 1: Memory
+  - 2: Display wait
+  - 3: Clipping
+  - 4: Shifting
+  - 5: Jumping
+
+For detailed descriptions of the quirks, see test 5 of Timendus'
+testing suite:
+  - https://github.com/Timendus/chip8-test-suite?tab=readme-ov-file
+
+The default behaviour will have all quirks conform to
+test 5 - quirks by Timendus. This means quirks 0 - 3 are turned
+on and quirks 4 and 5 are off.
+Note that having all quirks conform breaks test 3 - corax.
+Enabling or diabling quirks may break other tests (for example,
+disabling all quirks seems to break the visuals of test 6 - keypad)
+
 ===================================================================*/
 
 #include "types.h"
@@ -43,6 +63,9 @@ typedef struct {
 
   // opcode, only uses lower 3 nibbles
   u16 opcode;
+
+  // flags for quirks, bits 0 - 5 will be used as laid out above
+  u8 quirks;
 } Chip8;
 
 // Allocate emulator on the heap and initialise it
