@@ -68,8 +68,11 @@ typedef struct {
   u8 quirks;
 } Chip8;
 
-// Initialises Chip8 by setting PC and memory
+// Initialises Chip8 by setting PC and RAM
 void Chip8_init(Chip8 *chip, const char *filename);
+
+// Reset everything to 0, then set PC and RAM
+void Chip8_restart(Chip8 *chip, const char *filename);
 
 // Goes through a single step:
 // - update timer registers if necessary

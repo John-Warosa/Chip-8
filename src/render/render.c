@@ -1,4 +1,5 @@
 #include "render/render.h"
+#include "input.h"
 #include "raylib.h"
 #include "render/render_constants.h"
 

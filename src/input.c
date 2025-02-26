@@ -3,6 +3,16 @@
 
 #define SET_KEY(key, index) (key | 1u << index)
 
+enum Action get_action(void) {
+  if (IsKeyPressed(KEY_ESCAPE))
+    return EMU_EXIT;
+
+  if (IsKeyDown(KEY_LEFT_SUPER) && IsKeyPressed(KEY_R))
+    return CHIP8_RESTART;
+
+  return NO_ACTION;
+}
+
 u16 get_keys(void) {
   u16 keys = 0;
 

@@ -3,6 +3,7 @@
 #include "input.h"
 #include "instructions.h"
 #include "romload.h"
+#include <string.h>
 
 static void load_font(u8 ram[]);
 static void update_timers(Chip8 *chip);
@@ -40,6 +41,14 @@ static void load_font(u8 ram[]) {
   for (size_t i = 0; i < CHIP8_FONT_SIZE; ++i) {
     ram[CHIP8_FONT_START + i] = fontset[i];
   }
+}
+
+void Chip8_restart(Chip8 *chip, const char *filename) {
+  memset(chip, 0, sizeof(*chip));
+  load_font(chip->ram);
+  load_rom(chip->ram, CHIP8_PROGRAM_START, filename);
+
+  chip->PC = CHIP8_PROGRAM_START;
 }
 
 void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers) {
