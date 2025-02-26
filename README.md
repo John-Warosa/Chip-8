@@ -21,4 +21,4 @@ More game ROMs will be added to the Repo to test (and perhaps enjoy) the emulato
 
 ## Current state
 
-Since I am still working on refactoring, this version is broken. Version 1 however is functional.
+After refactoring, the emulator is functional again. The emulator now also supports restarting by pressing Cmd + r (on Mac)
