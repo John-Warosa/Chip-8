@@ -201,12 +201,10 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
     case 0x800e: {
       u8 x = X_REG(chip->opcode);
-      // u8 y = Y_REG(chip->opcode);
-      // u8 flag = ((chip->V[y] >> 7) & 1u);
+      u8 y = IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING) ? Y_REG(chip->opcode) : x;
       u8 flag = ((chip->V[x] >> 7) & 1u);
 
-      // chip->V[x] = chip->V[y] << 1;
-      chip->V[x] <<= 1;
+      chip->V[x] = chip->V[y] << 1;
       chip->V[0xf] = flag;
     } break;
     }
@@ -230,7 +228,7 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
   } break;
 
   case 0xb000: {
-    u8 x = X_REG(chip->opcode);
+    u8 x = IS_QUIRK_ACTIVE(quirks, QUIRK_JUMPING) ? X_REG(chip->opcode) : 0;
     u16 addr = NNN(chip->opcode) + chip->V[x];
 
     chip->PC = NNN(addr);
@@ -245,6 +243,11 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
   case 0xd000: {
     // TODO: clean up maybe?
+    if (!chip->vblank) {
+      chip->PC -= 2;
+      return;
+    }
+
     u8 x = X_REG(chip->opcode);
     u8 y = Y_REG(chip->opcode);
     u8 height = N(chip->opcode);
@@ -253,6 +256,10 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     u8 yPos = chip->V[y] % 32;
 
     chip->V[0xf] = 0;
+
+    if (IS_QUIRK_ACTIVE(quirks, QUIRK_WAIT)) {
+      chip->vblank = false;
+    }
 
     for (int row = 0; row < height; ++row) {
       u8 byte = chip->ram[chip->I + row];

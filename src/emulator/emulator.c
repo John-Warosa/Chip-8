@@ -42,6 +42,7 @@ void Emulator_loop(Emulator *emu) {
 
     if (ENOUGH_STEPS(counter, STEPS_PER_FRAME)) {
       render(emu);
+      emu->chip.vblank = true;
     }
 
     action_handler(emu, get_action());

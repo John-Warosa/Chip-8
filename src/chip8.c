@@ -49,6 +49,7 @@ void Chip8_restart(Chip8 *chip, const char *filename) {
   load_rom(chip->ram, CHIP8_PROGRAM_START, filename);
 
   chip->PC = CHIP8_PROGRAM_START;
+  chip->vblank = true;
 }
 
 void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers) {
