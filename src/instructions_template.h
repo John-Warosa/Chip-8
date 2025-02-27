@@ -91,8 +91,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
   // Opcode is 5XY0, so need to check last nibble
   case 0x5000: {
-    if (N(chip->opcode) != 0)
-      break;
+    // if (N(chip->opcode) != 0)
+    //   break;
 
     u8 x = X_REG(chip->opcode);
     u8 y = Y_REG(chip->opcode);
@@ -232,8 +232,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
   // Opcode is 9XY0, so need to check last nibble
   case 0x9000: {
-    if (N(chip->opcode) != 0)
-      break;
+    // if (N(chip->opcode) != 0)
+    //   break;
 
     u8 x = X_REG(chip->opcode);
     u8 y = X_REG(chip->opcode);
@@ -262,45 +262,68 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
   } break;
 
   case 0xd000: {
-    // TODO: clean up maybe?
-    if (!chip->vblank) {
-      chip->PC -= 2;
-      return;
-    }
+    uint8_t x = X_REG(chip->opcode);
+    uint8_t y = Y_REG(chip->opcode);
+    uint8_t height = N(chip->opcode);
 
-    u8 x = X_REG(chip->opcode);
-    u8 y = Y_REG(chip->opcode);
-    u8 height = N(chip->opcode);
-
-    u8 xPos = chip->V[x] % 64;
-    u8 yPos = chip->V[y] % 32;
+    uint8_t xPos = chip->V[x] % 64;
+    uint8_t yPos = chip->V[y] % 32;
 
     chip->V[0xf] = 0;
 
-    if (IS_QUIRK_ACTIVE(quirks, QUIRK_WAIT)) {
-      chip->vblank = false;
-    }
-
     for (int row = 0; row < height; ++row) {
-      u8 byte = chip->ram[chip->I + row];
+      uint8_t byte = chip->ram[chip->I + row];
 
       for (int col = 0; col < 8; ++col) {
-        // Prevent overflow in clipping mode
-        if (IS_QUIRK_ACTIVE(quirks, QUIRK_CLIPPING) &&
-            (yPos + row >= 32 || xPos + col >= 64)) {
-          break;
-        }
-
         bool memPixel = (byte >> (7 - col)) & 1u;
-        bool scrPixel = chip->pixels[(yPos + row) % 32][(xPos + col) % 64];
+        bool scrPixel = chip->pixels[yPos + row][xPos + col];
+        chip->pixels[yPos + row][xPos + col] ^= memPixel;
 
-        chip->pixels[(yPos + row) % 32][(xPos + col) % 64] ^= memPixel;
         if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
           chip->V[0xf] = 1;
         }
       }
     }
   } break;
+    // // TODO: clean up maybe?
+    // if (!chip->vblank) {
+    //   chip->PC -= 2;
+    //   return;
+    // }
+
+    // u8 x = X_REG(chip->opcode);
+    // u8 y = Y_REG(chip->opcode);
+    // u8 height = N(chip->opcode);
+
+    // u8 xPos = chip->V[x] % 64;
+    // u8 yPos = chip->V[y] % 32;
+
+    // chip->V[0xf] = 0;
+
+    // if (IS_QUIRK_ACTIVE(quirks, QUIRK_WAIT)) {
+    //   chip->vblank = false;
+    // }
+
+    // for (int row = 0; row < height; ++row) {
+    //   u8 byte = chip->ram[chip->I + row];
+
+    //   for (int col = 0; col < 8; ++col) {
+    //     // Prevent overflow in clipping mode
+    //     if (IS_QUIRK_ACTIVE(quirks, QUIRK_CLIPPING) &&
+    //         (yPos + row >= 32 || xPos + col >= 64)) {
+    //       break;
+    //     }
+
+    //     bool memPixel = (byte >> (7 - col)) & 1u;
+    //     bool scrPixel = chip->pixels[(yPos + row) % 32][(xPos + col) % 64];
+
+    //     chip->pixels[(yPos + row) % 32][(xPos + col) % 64] ^= memPixel;
+    //     if ((chip->V[0xf] == 0) && memPixel && scrPixel) {
+    //       chip->V[0xf] = 1;
+    //     }
+    //   }
+    // }
+  // } break;
 
   // valid opcodes: EX9E nd EXA1
   case 0xe000:
@@ -341,12 +364,12 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     case 0xf00a: {
       static u16 lastKeys;
 
-      if (!lastKeys || chip->keys) {
-        chip->PC -= 2;
-        lastKeys = chip->keys;
+      // if (!lastKeys || chip->keys) {
+      //   chip->PC -= 2;
+      //   lastKeys = chip->keys;
 
-        return;
-      }
+      //   return;
+      // }
 
       u8 x = X_REG(chip->opcode);
 
@@ -358,6 +381,9 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
           return;
         }
       }
+
+      lastKeys = chip->keys;
+      chip->PC -= 2;
     } break;
 
     case 0xf015: {
