@@ -181,12 +181,23 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
     case 0x8006: {
       u8 x = X_REG(chip->opcode);
+      u8 y = Y_REG(chip->opcode);
+      u8 flag;
+
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING)) {
+        flag = (chip->V[x] & 1u);
+        chip->V[x] = chip->V[y] >> 1;
+      } else {
+        flag = (chip->V[y] & 1u);
+        chip->V[x] = chip->V[x] >> 1;
+      }
+
       // u8 y = Y_REG(chip->opcode);
       // u8 flag = (chip->V[y] & 1u);
-      u8 flag = (chip->V[x] & 1u);
+      // u8 flag = (chip->V[x] & 1u);
 
       // chip->V[x] = chip->V[y] >> 1;
-      chip->V[x] >>= 1;
+      // chip->V[x] >>= 1;
       chip->V[0xf] = flag;
     } break;
 
@@ -201,12 +212,26 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
     case 0x800e: {
       u8 x = X_REG(chip->opcode);
-      u8 y = IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING) ? Y_REG(chip->opcode) : x;
-      u8 flag = ((chip->V[x] >> 7) & 1u);
+      u8 y = Y_REG(chip->opcode);
+      u8 flag;
 
-      chip->V[x] = chip->V[y] << 1;
+      if (IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING)) {
+        flag = ((chip->V[y] >> 7) & 1u);
+        chip->V[x] = chip->V[y] << 1;
+      } else {
+        flag = ((chip->V[x] >> 7) & 1u);
+        chip->V[x] = chip->V[x] << 1;
+      }
+
       chip->V[0xf] = flag;
     } break;
+      //   u8 x = X_REG(chip->opcode);
+      //   u8 y = IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING) ? Y_REG(chip->opcode)
+      //   : x; u8 flag = ((chip->V[y] >> 7) & 1u);
+
+      //   chip->V[x] = chip->V[y] << 1;
+      //   chip->V[0xf] = flag;
+      // } break;
     }
     break;
 
