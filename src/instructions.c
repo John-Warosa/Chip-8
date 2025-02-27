@@ -265,11 +265,11 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
       u8 byte = chip->ram[chip->I + row];
 
       for (int col = 0; col < 8; ++col) {
-        // if (yPos + row >= 32 || xPos + col >= 64) {
-        //   break;
-        // }
-        // if (xPos + col >= 64)
-        //   break;
+        // Prevent overflow in clipping mode
+        if (IS_QUIRK_ACTIVE(quirks, QUIRK_CLIPPING) &&
+            (yPos + row >= 32 || xPos + col >= 64)) {
+          break;
+        }
 
         bool memPixel = (byte >> (7 - col)) & 1u;
         bool scrPixel = chip->pixels[(yPos + row) % 32][(xPos + col) % 64];
