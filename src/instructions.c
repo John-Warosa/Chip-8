@@ -2,6 +2,7 @@
 #include "chip8_constants.h"
 #include "emulator/emulator_constants.h"
 #include "types.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -186,18 +187,12 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
 
       if (IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING)) {
         flag = (chip->V[x] & 1u);
-        chip->V[x] = chip->V[y] >> 1;
+        chip->V[x] = chip->V[x] >> 1;
       } else {
         flag = (chip->V[y] & 1u);
-        chip->V[x] = chip->V[x] >> 1;
+        chip->V[x] = chip->V[y] >> 1;
       }
 
-      // u8 y = Y_REG(chip->opcode);
-      // u8 flag = (chip->V[y] & 1u);
-      // u8 flag = (chip->V[x] & 1u);
-
-      // chip->V[x] = chip->V[y] >> 1;
-      // chip->V[x] >>= 1;
       chip->V[0xf] = flag;
     } break;
 
@@ -216,11 +211,11 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
       u8 flag;
 
       if (IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING)) {
-        flag = ((chip->V[y] >> 7) & 1u);
-        chip->V[x] = chip->V[y] << 1;
-      } else {
         flag = ((chip->V[x] >> 7) & 1u);
         chip->V[x] = chip->V[x] << 1;
+      } else {
+        flag = ((chip->V[y] >> 7) & 1u);
+        chip->V[x] = chip->V[y] << 1;
       }
 
       chip->V[0xf] = flag;
