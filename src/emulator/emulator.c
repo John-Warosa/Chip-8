@@ -17,7 +17,7 @@ void Emulator_init(Emulator *emu, const char *filename) {
   emu->running = true;
 
   Chip8_init(&emu->chip, filename);
-  strncpy(emu->filename, filename, MAX_FILE_LENGTH);
+  strncpy(emu->filename, filename, MAX_FILE_LENGTH - 1);
 
   render_init(CHIP8_SCR_WIDTH, CHIP8_SCR_HEIGHT);
 }
