@@ -42,8 +42,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     break;
 
   case 0x3000: {
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t val = NN(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 val = NN(chip->opcode);
 
     if (chip->V[x] == val) {
       chip->PC += 2;
@@ -51,8 +51,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
   } break;
 
   case 0x4000: {
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t val = NN(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 val = NN(chip->opcode);
 
     if (chip->V[x] != val) {
       chip->PC += 2;
@@ -63,8 +63,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     if (chip->opcode & 0x000f)
       break;
 
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t y = Y_REG(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 y = Y_REG(chip->opcode);
 
     if (chip->V[x] == chip->V[y]) {
       chip->PC += 2;
@@ -72,15 +72,15 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
   } break;
 
   case 0x6000: {
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t val = NN(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 val = NN(chip->opcode);
 
     chip->V[x] = val;
   } break;
 
   case 0x7000: {
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t val = NN(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 val = NN(chip->opcode);
 
     chip->V[x] += val;
   } break;
@@ -89,8 +89,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     switch (chip->opcode & 0xf00f) {
 
     case 0x8000: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t y = Y_REG(chip->opcode);
+      u8 x = X_REG(chip->opcode);
+      u8 y = Y_REG(chip->opcode);
 
       chip->V[x] = chip->V[y];
     } break;
@@ -128,30 +128,32 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
       }
     } break;
     case 0x8004: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t y = Y_REG(chip->opcode);
-      uint8_t flag = (chip->V[x] + chip->V[y]) > 0xff;
+      u8 x = X_REG(chip->opcode);
+      u8 y = Y_REG(chip->opcode);
+      u8 flag = (chip->V[x] + chip->V[y]) > 0xff;
 
       chip->V[x] += chip->V[y];
       chip->V[0xf] = flag;
     } break;
 
     case 0x8005: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t y = Y_REG(chip->opcode);
-      uint8_t flag = (chip->V[x] >= chip->V[y]);
+      u8 x = X_REG(chip->opcode);
+      u8 y = Y_REG(chip->opcode);
+      u8 flag = (chip->V[x] >= chip->V[y]);
 
       chip->V[x] -= chip->V[y];
       chip->V[0xf] = flag;
     } break;
 
     case 0x8006: {
+
+      // TODO: refactor 8xy6 and 8xye to be cleaner
       u8 x = X_REG(chip->opcode);
       u8 y = Y_REG(chip->opcode);
       u8 flag;
 
       if (IS_QUIRK_ACTIVE(quirks, QUIRK_SHIFTING)) {
-        flag = (chip->V[x] & 1u);
+        flag = (CHECK_BIT(chip->V[x], 0));
         chip->V[x] = chip->V[x] >> 1;
       } else {
         flag = (chip->V[y] & 1u);
@@ -162,9 +164,9 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     } break;
 
     case 0x8007: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t y = Y_REG(chip->opcode);
-      uint8_t flag = (chip->V[y] >= chip->V[x]);
+      u8 x = X_REG(chip->opcode);
+      u8 y = Y_REG(chip->opcode);
+      u8 flag = (chip->V[y] >= chip->V[x]);
 
       chip->V[x] = chip->V[y] - chip->V[x];
       chip->V[0xf] = flag;
@@ -192,8 +194,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     if (chip->opcode & 0x000f)
       break;
 
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t y = Y_REG(chip->opcode);
+    u8 x = X_REG(chip->opcode);
+    u8 y = Y_REG(chip->opcode);
 
     if (chip->V[x] != chip->V[y]) {
       chip->PC += 2;
@@ -212,8 +214,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
   } break;
 
   case 0xc000: {
-    uint8_t x = X_REG(chip->opcode);
-    uint8_t randInt = rand();
+    u8 x = X_REG(chip->opcode);
+    u8 randInt = rand();
 
     chip->V[x] = randInt & NN(chip->opcode);
   } break;
@@ -262,8 +264,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     switch (chip->opcode & 0xf0ff) {
 
     case 0xe09e: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t index = N(chip->V[x]);
+      u8 x = X_REG(chip->opcode);
+      u8 index = N(chip->V[x]);
 
       if (CHECK_BIT(chip->keys, index)) {
         chip->PC += 2;
@@ -271,8 +273,8 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     } break;
 
     case 0xe0a1: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t index = N(chip->V[x]);
+      u8 x = X_REG(chip->opcode);
+      u8 index = N(chip->V[x]);
 
       if (!CHECK_BIT(chip->keys, index)) {
         chip->PC += 2;
@@ -285,75 +287,56 @@ void execute_instruction(Chip8 *chip, u16 quirks) {
     switch (chip->opcode & 0xf0ff) {
 
     case 0xf007: {
-      uint8_t x = X_REG(chip->opcode);
+      u8 x = X_REG(chip->opcode);
 
       chip->V[x] = chip->delay;
     } break;
 
     case 0xf00a: {
       static uint16_t lastKeys;
+      u8 x = X_REG(chip->opcode);
 
-      uint8_t x = X_REG(chip->opcode);
-      // If no key is pressed, result will be NULL
-
-      // for (int i = 0; i < 16; ++i) {
-      //   printf("chip->key[%d]: %d, lastKeys[%d]: %d\n", i, chip->keys[i], i,
-      //          lastKeys[i]);
-      // }
-
-      // Need to have non-NULL ptr and NULL ptr
-      // to represent the key being released
-      if (lastKeys && !chip->keys) {
-        for (int i = 0; i < 16; ++i) {
-          if (lastKeys & (1u << i)) {
-            chip->V[x] = i;
-          }
-        }
-        lastKeys = 0;
+      if (!lastKeys || chip->keys) {
+        lastKeys = chip->keys;
+        chip->PC -= 2;
         return;
       }
 
-      lastKeys = chip->keys;
-      chip->PC -= 2;
-
-      // for (int i = 0; i < 16; ++i) {
-      //   if (chip->keys[i]) {
-      //     chip->V[x] = i;
-      //     return;
-      //   }
-      // }
-
-      // chip->PC -= 2;
+      for (int i = 0; i < 16; ++i) {
+        if (CHECK_BIT(lastKeys, i)) {
+          chip->V[x] = i;
+        }
+      }
     } break;
 
     case 0xf015: {
-      uint8_t x = X_REG(chip->opcode);
+      u8 x = X_REG(chip->opcode);
 
       chip->delay = chip->V[x];
     } break;
 
     case 0xf018: {
-      uint8_t x = X_REG(chip->opcode);
+      u8 x = X_REG(chip->opcode);
 
       chip->sound = chip->V[x];
     } break;
 
     case 0xf01e: {
-      uint8_t x = X_REG(chip->opcode);
+      u8 x = X_REG(chip->opcode);
 
       chip->I = NNN(chip->I + chip->V[x]);
     } break;
 
     case 0xf029: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t num = N(chip->V[x]);
+      u8 x = X_REG(chip->opcode);
+      u8 num = N(chip->V[x]);
 
       chip->I = CHIP8_FONT_START + 5 * num;
     } break;
 
     case 0xf033: {
-      uint8_t x = X_REG(chip->opcode);
-      uint8_t val = chip->V[x];
+      u8 x = X_REG(chip->opcode);
+      u8 val = chip->V[x];
 
       chip->ram[chip->I] = (val / 100) % 10;
       chip->ram[chip->I + 1] = (val / 10) % 10;
