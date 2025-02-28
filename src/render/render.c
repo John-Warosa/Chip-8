@@ -1,6 +1,10 @@
 #include "render/render.h"
+#include "chip8.h"
 #include "raylib.h"
 #include "render/render_constants.h"
+
+#define DRAW_FONT_TEXT(str, xPos, yPos)                                        \
+  DrawTextEx(rc.font, str, (Vector2){xPos, yPos}, 20, 1, RAYWHITE)
 
 static void render_screen(const Chip8 *chip);
 static void render_chip_info(const Chip8 *chip);
@@ -38,14 +42,18 @@ void render(const Emulator *emu) {
 
   DrawRectangle(0, 0, rc.width, rc.height, BLACK);
   render_screen(&emu->chip);
-  for (int i = 0; i < 6; ++i) {
-    DrawText(TextFormat("Quirk %d: %d", i, emu->quirks & (1u << i) ? 1 : 0),
-             rc.width + 200, 20 + 20 * i, 20, RAYWHITE);
-  }
 
-  render_chip_info(&emu->chip);
+  // for (int i = 0; i < 6; ++i) {
+  //   DRAW_FONT_TEXT(
+  //       TextFormat("Quirk %d: %d", i, emu->quirks & (1u << i) ? 1 : 0),
+  //       rc.width + 200, 20 + 20 * i);
+  // }
 
-  DrawFPS(20, 20);
+  // render_chip_info(&emu->chip);
+  DRAW_FONT_TEXT(Chip8_memory_view(&emu->chip), rc.width + MEMORY_POS_X,
+                 MEMORY_POS_Y);
+
+  // DrawFPS(20, 20);
 
   EndDrawing();
 }

@@ -61,7 +61,7 @@ typedef struct {
   bool pixels[32][64];
   bool vblank;
 
-  // opcode, only uses lower 3 nibbles
+  // Opcode, only uses lower 3 nibbles
   u16 opcode;
 } Chip8;
 
@@ -72,14 +72,15 @@ void Chip8_init(Chip8 *chip, const char *filename);
 void Chip8_restart(Chip8 *chip, const char *filename);
 
 // Goes through a single step:
-// - update timer registers if necessary
+// - Update timer registers if necessary
 // - Process input
-// - fetch instruction
-// - execute instruction
+// - Fetch instruction
+// - Execute instruction
 void Chip8_step(Chip8 *chip, u16 quirks, bool updateTimers);
 
-// Store Chip8 info in the provided buffer
-// Returns 1 if the buffer size was too small, 0 otherwise
-int Chip8_write_info(char *buf, size_t bufsize, const Chip8 *chip);
+// Returns a memory view string
+// A memory view consists of a single memory page
+// ranging from page 00 to page 0f
+char *Chip8_memory_view(const Chip8 *chip);
 
 #endif // CHIP8_H

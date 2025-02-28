@@ -3,6 +3,7 @@
 #include "input.h"
 #include "instructions.h"
 #include "romload.h"
+#include <stdio.h>
 #include <string.h>
 
 static void load_font(u8 ram[]);
@@ -79,4 +80,24 @@ static u16 get_opcode(const u8 ram[], u16 PC) {
   return (ram[PC] << 8) + ram[PC + 1];
 }
 
-int write_chip8_info(char *buf, size_t bufsize, const Chip8 *chip);
+char *Chip8_memory_view(const Chip8 *chip) {
+  static char viewBuffer[CHIP8_MEMORY_VIEW_SIZE];
+  char *viewStr = viewBuffer;
+  u16 memPage = chip->PC & 0x0f00;
+
+  viewStr += sprintf(viewStr, "Memory page %02X:\n", memPage >> 8);
+
+  for (size_t i = 0; i < 16; ++i) {
+    viewStr += sprintf(viewStr, "%02lX: ", i);
+
+    for (size_t j = 0; j < 8; ++j) {
+      u8 index = 16 * i + 2 * j;
+      viewStr += sprintf(viewStr, "%02X%02X ", chip->ram[memPage + index],
+                         chip->ram[memPage + index + 1]);
+    }
+
+    viewStr += sprintf(viewStr, "\n");
+  }
+
+  return viewBuffer;
+}
